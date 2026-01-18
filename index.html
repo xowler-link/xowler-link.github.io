@@ -29,22 +29,6 @@
             -webkit-tap-highlight-color: transparent;
         }
         
-        /* Скрываем элементы DevTools в Kiwi */
-        div[class*="devtools"],
-        div[class*="DevTools"],
-        div[class*="inspector"],
-        div[class*="console"],
-        *[class*="kiwi-dev"] {
-            display: none !important;
-            visibility: hidden !important;
-            opacity: 0 !important;
-            height: 0 !important;
-            width: 0 !important;
-            position: fixed !important;
-            top: -9999px !important;
-            left: -9999px !important;
-        }
-        
         /* Блокировка выделения */
         ::selection {
             background: transparent;
@@ -73,24 +57,6 @@
             flex-direction: column;
         }
         
-        /* Элемент-ловушка */
-        .devtrap {
-            position: absolute;
-            top: -9999px;
-            left: -9999px;
-            width: 1px;
-            height: 1px;
-            overflow: hidden;
-            opacity: 0;
-            pointer-events: none;
-        }
-        
-        /* Анти-инспект стили */
-        [data-inspect="blocked"] {
-            cursor: none !important;
-            pointer-events: none !important;
-        }
-        
         input, textarea {
             -webkit-user-select: text;
             -moz-user-select: text;
@@ -111,14 +77,6 @@
         <div>НЕЛЕГАЛЬНЫЙ ДОСТУП</div>
         <div style="font-size:1rem; margin-top:20px;">Система безопасности заблокировала доступ</div>
     </div>
-    
-    <!-- Ловушки для DevTools -->
-    <div class="devtrap" data-devtools-trap="true" id="trap1">DEVTOOLS_TRAP_1</div>
-    <div class="devtrap" data-devtools-trap="true" id="trap2">DEVTOOLS_TRAP_2</div>
-    <div class="devtrap" data-devtools-trap="true" id="trap3">DEVTOOLS_TRAP_3</div>
-    
-    <!-- Пустой iframe для блокировки -->
-    <iframe src="about:blank" style="display:none" id="blockerFrame"></iframe>
 
     <div class="container">
         <header class="header">
@@ -201,7 +159,7 @@
         </main>
     </div>
 
-    <!-- ЗАЩИТА УРОВЕНЬ 3: Встроенный JS защита -->
+    <!-- УМНАЯ ЗАЩИТА: Только для Desktop и при попытке открыть DevTools -->
     <script>
         // ===== ОСНОВНАЯ ФУНКЦИЯ ЗАЩИТЫ =====
         function activateHardProtection() {
@@ -212,45 +170,225 @@
             document.body.style.overflow = 'hidden';
             document.documentElement.style.overflow = 'hidden';
             
-            // Пытаемся перенаправить
+            // Через 3 секунды возвращаем обратно (для мобильных)
             setTimeout(() => {
-                try {
-                    window.location.replace('about:blank');
-                } catch(e) {
-                    // Если не удалось, просто очищаем
-                    document.body.innerHTML = '';
-                    document.body.appendChild(protection);
-                }
-            }, 1000);
-            
-            // Дополнительная блокировка для Kiwi
-            try {
-                if (window.console) {
-                    console.clear();
-                    console.log = console.warn = console.error = function(){};
-                }
-            } catch(e) {}
+                protection.style.display = 'none';
+                document.body.style.overflow = '';
+                document.documentElement.style.overflow = '';
+            }, 3000);
         }
         
-        // ===== УРОВЕНЬ 1: Проверка debugger =====
-        function debuggerCheck() {
-            const start = performance.now();
-            (function(){})["constructor"]("debugger")();
-            const end = performance.now();
-            if (end - start > 100) {
+        // ===== ПРОВЕРКА НА МОБИЛЬНЫЕ УСТРОЙСТВА =====
+        function isMobileDevice() {
+            return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        }
+        
+        // ===== ПРОВЕРКА НА KIWI BROWSER =====
+        function isKiwiBrowser() {
+            const ua = navigator.userAgent.toLowerCase();
+            return ua.includes('kiwi') || ua.includes('xwalk');
+        }
+        
+        // ===== УМНОЕ ОБНАРУЖЕНИЕ DEVTOOLS =====
+        function smartDetectDevTools() {
+            // На мобильных - менее строгая проверка
+            if (isMobileDevice()) {
+                const widthDiff = Math.abs(window.outerWidth - window.innerWidth);
+                const heightDiff = Math.abs(window.outerHeight - window.innerHeight);
+                
+                // На мобильных DevTools обычно больше 300px
+                if (widthDiff > 300 || heightDiff > 300) {
+                    return true;
+                }
+                return false;
+            }
+            
+            // На десктопе - строгая проверка
+            const widthDiff = Math.abs(window.outerWidth - window.innerWidth);
+            const heightDiff = Math.abs(window.outerHeight - window.innerHeight);
+            
+            // На десктопе DevTools обычно больше 100px
+            if (widthDiff > 100 || heightDiff > 100) {
                 return true;
             }
+            
             return false;
         }
         
-        // ===== УРОВЕНЬ 2: Обнаружение DevTools =====
-        function detectDevTools() {
-            // Метод 1: Размеры окна
-            const widthDiff = window.outerWidth - window.innerWidth;
-            const heightDiff = window.outerHeight - window.innerHeight;
+        // ===== БЛОКИРОВКА ТОЛЬКО КЛАВИШ DEVTOOLS =====
+        function setupSmartKeyProtection() {
+            // Только на десктопе блокируем F12
+            if (!isMobileDevice()) {
+                document.addEventListener('keydown', function(e) {
+                    // Блокировка F12
+                    if (e.key === 'F12') {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        activateHardProtection();
+                        return false;
+                    }
+                    
+                    // Блокировка Ctrl+Shift+I только на десктопе
+                    if (e.ctrlKey && e.shiftKey && e.key === 'I') {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        activateHardProtection();
+                        return false;
+                    }
+                    
+                    // Блокировка Ctrl+Shift+J только на десктопе
+                    if (e.ctrlKey && e.shiftKey && e.key === 'J') {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        activateHardProtection();
+                        return false;
+                    }
+                    
+                    // Блокировка Ctrl+U только на десктопе
+                    if (e.ctrlKey && e.key === 'U') {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        activateHardProtection();
+                        return false;
+                    }
+                }, true);
+            }
             
-            // Для Kiwi Browser на мобильных
-            if (widthDiff > 200 || heightDiff > 200) {
+            // Для всех устройств блокируем контекстное меню
+            document.addEventListener('contextmenu', function(e) {
+                if (!isMobileDevice() || isKiwiBrowser()) {
+                    e.preventDefault();
+                    return false;
+                }
+            }, true);
+        }
+        
+        // ===== ЗАПУСК УМНОЙ СИСТЕМЫ ЗАЩИТЫ =====
+        function startSmartSecuritySystem() {
+            console.log('[SECURITY] Умная система защиты активирована');
+            
+            // 1. Настройка защиты клавиш
+            setupSmartKeyProtection();
+            
+            // 2. Проверка DevTools с интервалом
+            let lastWidth = window.outerWidth;
+            let lastHeight = window.outerHeight;
+            let detectionCount = 0;
+            
+            const checkInterval = setInterval(() => {
+                // Проверяем изменение размеров (признак DevTools)
+                if (window.outerWidth !== lastWidth || window.outerHeight !== lastHeight) {
+                    if (smartDetectDevTools()) {
+                        detectionCount++;
+                        
+                        // На мобильных нужно больше подтверждений
+                        const threshold = isMobileDevice() ? 3 : 2;
+                        
+                        if (detectionCount >= threshold) {
+                            activateHardProtection();
+                            detectionCount = 0;
+                        }
+                    }
+                    
+                    lastWidth = window.outerWidth;
+                    lastHeight = window.outerHeight;
+                } else {
+                    detectionCount = 0;
+                }
+                
+                // Проверка debugger (только на десктопе)
+                if (!isMobileDevice()) {
+                    const start = Date.now();
+                    (function(){})["constructor"]("debugger")();
+                    if (Date.now() - start > 100) {
+                        activateHardProtection();
+                    }
+                }
+            }, 1000);
+            
+            // 3. Для Kiwi Browser - дополнительная защита
+            if (isKiwiBrowser()) {
+                console.log('[SECURITY] Kiwi Browser обнаружен');
+                
+                // Проверяем наличие DevTools в Kiwi
+                setInterval(() => {
+                    // В Kiwi DevTools добавляют свои классы
+                    const hasDevToolsElements = document.querySelector('[class*="devtools"], [class*="DevTools"]');
+                    if (hasDevToolsElements) {
+                        activateHardProtection();
+                    }
+                }, 500);
+            }
+            
+            // 4. Защита от удаления защиты
+            Object.defineProperty(window, 'stopSecurity', {
+                get() {
+                    activateHardProtection();
+                    return function() {};
+                },
+                configurable: false,
+                enumerable: false
+            });
+            
+            // 5. Блокировка консоли (мягкая)
+            if (!isMobileDevice()) {
+                const consoleMethods = ['log', 'warn', 'error', 'info', 'debug'];
+                consoleMethods.forEach(method => {
+                    if (console[method]) {
+                        const original = console[method];
+                        console[method] = function(...args) {
+                            // Разрешаем первые 5 вызовов (чтобы наш код работал)
+                            if (window.consoleCallCount === undefined) {
+                                window.consoleCallCount = 0;
+                            }
+                            
+                            if (window.consoleCallCount < 5) {
+                                window.consoleCallCount++;
+                                return original.apply(this, args);
+                            }
+                            
+                            // После 5 вызовов - активируем защиту
+                            if (window.consoleCallCount >= 5) {
+                                activateHardProtection();
+                            }
+                            return null;
+                        };
+                    }
+                });
+            }
+        }
+        
+        // Запускаем после загрузки
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', startSmartSecuritySystem);
+        } else {
+            startSmartSecuritySystem();
+        }
+        
+        // Дополнительная защита только для десктопа
+        if (!isMobileDevice()) {
+            // Блокировка копирования
+            document.addEventListener('copy', function(e) {
+                e.preventDefault();
+                return false;
+            }, true);
+            
+            // Блокировка перетаскивания
+            document.addEventListener('dragstart', function(e) {
+                e.preventDefault();
+                return false;
+            }, true);
+        }
+        
+        // Запрет открытия в iframe
+        if (window.top !== window.self) {
+            window.top.location = window.self.location;
+        }
+    </script>
+    
+    <script src="script.js"></script>
+</body>
+</html>htDiff > 200) {
                 return true;
             }
             
