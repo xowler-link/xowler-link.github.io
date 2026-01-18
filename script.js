@@ -1,4 +1,9 @@
 document.addEventListener('DOMContentLoaded', function() {
+    // Проверяем, не активирована ли защита
+    if (document.getElementById('hardcoreProtection').style.display === 'flex') {
+        return;
+    }
+    
     const themeToggle = document.getElementById('themeToggle');
     const themeIcon = themeToggle.querySelector('i');
     const playBtn = document.getElementById('playBtn');
@@ -155,4 +160,15 @@ document.addEventListener('DOMContentLoaded', function() {
     audio.addEventListener('error', function() {
         durationEl.textContent = '3:24';
     });
+    
+    // Добавляем защиту для audio элемента
+    const originalPlay = audio.play;
+    audio.play = function() {
+        try {
+            return originalPlay.call(this);
+        } catch(e) {
+            // Игнорируем ошибки воспроизведения
+            return Promise.resolve();
+        }
+    };
 });
