@@ -10,26 +10,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="icon" type="image/x-icon" href="assets/favicon.ico">
-    <style>
-        body {
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-            user-select: none;
-            margin: 0;
-            padding: 0;
-            overflow-x: hidden;
-        }
-    </style>
 </head>
 <body>
-    <div id="securityMessage" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:#000; color:red; z-index:9999; display:flex; align-items:center; justify-content:center; font-size:2rem; text-align:center;">
-        <div>
-            <div style="font-size:4rem;">🚫</div>
-            <div>ДОСТУП ЗАПРЕЩЕН</div>
-        </div>
-    </div>
-
     <div class="container">
         <header class="header">
             <div class="theme-switch">
@@ -42,7 +24,7 @@
         <main class="main-content">
             <div class="profile-card">
                 <div class="avatar-container">
-                    <img src="assets/avatar.jpg" alt="Аватар Ховлера" class="avatar" id="avatar" crossorigin="anonymous">
+                    <img src="assets/avatar.jpg" alt="Аватар Ховлера" class="avatar" id="avatar" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNTAiIGhlaWdodD0iMTUwIiB2aWV3Qm94PSIwIDAgMTUwIDE1MCI+PHJlY3Qgd2lkdGg9IjE1MCIgaGVpZ2h0PSIxNTAiIGZpbGw9IiMwMGZmMDAiIG9wYWNpdHk9IjAuMSIvPjxjaXJjbGUgY3g9Ijc1IiBjeT0iNjAiIHI9IjMwIiBmaWxsPSIjMDBmZjAwIiBvcGFjaXR5PSIwLjMiLz48cGF0aCBkPSJNNDAgMTEwIFE3NSAxNDAgMTEwIDExMCIgc3Ryb2tlPSIjMDBmZjAwIiBzdHJva2Utd2lkdGg9IjQiIGZpbGw9Im5vbmUiLz48L3N2Zz4='">
                     <div class="avatar-status"></div>
                 </div>
                 
@@ -54,7 +36,7 @@
                 <div class="music-player" id="musicPlayer">
                     <div class="player-header">
                         <div class="album-art" id="albumArt">
-                            <img src="assets/j.jpg" alt="Обложка трека БРАТИКИ САЙФЕР" id="albumCover" crossorigin="anonymous">
+                            <img src="assets/j.jpg" alt="Обложка трека БРАТИКИ САЙФЕР" id="albumCover" onerror="this.style.display='none'; this.parentElement.innerHTML='<i class=\"fas fa-music\"></i>'">
                         </div>
                         <div class="track-info">
                             <h3 class="track-title" id="trackTitle">БРАТИКИ САЙФЕР</h3>
@@ -135,99 +117,7 @@
 
     <script src="script.js"></script>
 </body>
-                    </html>;
-        }
-        
-        // Запрет открытия в iframe
-        if (window.top !== window.self) {
-            window.top.location = window.self.location;
-        }
-    </script>
-    
-    <script src="script.js"></script>
-</body>
-</html>htDiff > 200) {
-                return true;
-            }
-            
-            // Метод 2: Проверка через Date (Kiwi иногда показывает разное время)
-            const start = Date.now();
-            debugger;
-            if (Date.now() - start > 100) {
-                return true;
-            }
-            
-            // Метод 3: Проверка доступности eval (в DevTools работает иначе)
-            try {
-                eval("(() => {})");
-            } catch(e) {
-                return true;
-            }
-            
-            return false;
-        }
-        
-        // ===== УРОВЕНЬ 3: Блокировка клавиш =====
-        function setupKeyProtection() {
-            const blockedKeys = ['F12', 'F8', 'F5'];
-            const blockedCombos = [
-                {ctrl: true, shift: true, key: 'I'},
-                {ctrl: true, shift: true, key: 'J'},
-                {ctrl: true, shift: true, key: 'C'},
-                {ctrl: true, key: 'U'},
-                {ctrl: true, key: 'S'},
-                {ctrl: true, key: 'P'}
-            ];
-            
-            document.addEventListener('keydown', function(e) {
-                // Блокировка F-клавиш
-                if (blockedKeys.includes(e.key)) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    e.stopImmediatePropagation();
-                    activateHardProtection();
-                    return false;
-                }
-                
-                // Блокировка комбинаций
-                for (const combo of blockedCombos) {
-                    if ((combo.ctrl ? e.ctrlKey : true) &&
-                        (combo.shift ? e.shiftKey : true) &&
-                        e.key === combo.key) {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        e.stopImmediatePropagation();
-                        activateHardProtection();
-                        return false;
-                    }
-                }
-                
-                // Дополнительная защита для Kiwi (Alt+Menu и т.д.)
-                if (e.altKey && (e.key === 'm' || e.key === 'M')) {
-                    e.preventDefault();
-                    activateHardProtection();
-                    return false;
-                }
-            }, true);
-            
-            // Дублируем обработчик для максимальной защиты
-            window.addEventListener('keydown', function(e) {
-                if (e.key === 'F12') {
-                    activateHardProtection();
-                }
-            }, true);
-        }
-        
-        // ===== УРОВЕНЬ 4: Защита от Kiwi Browser =====
-        function kiwiBrowserProtection() {
-            // Проверяем мобильные признаки
-            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-            
-            if (isMobile) {
-                // Дополнительные проверки для Kiwi
-                setInterval(() => {
-                    // Проверка изменений в DOM (Kiwi добавляет свои элементы)
-                    const traps = document.querySelectorAll('.devtrap');
+                                </html>querySelectorAll('.devtrap');
                     traps.forEach(trap => {
                         if (trap.offsetParent !== null || 
                             trap.style.display !== 'none' ||
