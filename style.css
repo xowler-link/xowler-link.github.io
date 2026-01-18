@@ -452,4 +452,32 @@ body {
     .profile-card {
         padding: 35px;
     }
+    /* Дополнительные стили защиты */
+body[data-protected="true"] {
+    cursor: default !important;
+}
+
+#hardcoreProtection {
+    font-family: 'Inter', sans-serif;
+    background: linear-gradient(45deg, #000, #1a0000);
+}
+
+/* Анти-скриншот защита (частичная) */
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+    .profile-card {
+        -webkit-backface-visibility: hidden;
+        -webkit-transform: translate3d(0,0,0);
+    }
+}
+
+/* Защита от печати */
+@media print {
+    body * {
+        visibility: hidden;
+    }
+    #hardcoreProtection {
+        visibility: visible;
+        display: flex !important;
+    }
+}
 }
