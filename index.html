@@ -89,38 +89,182 @@
                         <span>GitHub профиль</span>
                     </a>
                 </div>
-
-                <div class="custom-theme">
-                    <h3 style="text-align:center; margin:20px 0 10px; color:var(--text-color);">Настроить тему</h3>
-                    <div class="theme-controls">
-                        <div class="color-picker">
-                            <label>Основной цвет:</label>
-                            <input type="color" id="primaryColor" value="#00ff00">
-                        </div>
-                        <div class="color-picker">
-                            <label>Фон:</label>
-                            <input type="color" id="bgColor" value="#0a0a0a">
-                        </div>
-                        <button id="saveTheme" class="link-btn" style="background:var(--primary-color); margin-top:10px;">
-                            <i class="fas fa-save"></i>
-                            <span>Сохранить тему</span>
-                        </button>
-                        <button id="resetTheme" class="link-btn" style="background:#666; margin-top:10px;">
-                            <i class="fas fa-undo"></i>
-                            <span>Сбросить</span>
-                        </button>
-                    </div>
-                </div>
             </div>
         </main>
     </div>
 
-    <script src="script.js"></script>
-</body>
-</html>
+    <script>
+        // === ТЕМА ===
+        function initTheme() {
+            const savedTheme = localStorage.getItem('theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', savedTheme);
             
+            const themeIcon = document.querySelector('#themeToggle i');
+            if (themeIcon) {
+                themeIcon.className = savedTheme === 'dark' ? 'fas fa-moon' : 'fas fa-sun';
+            }
+        }
+        
+        // Переключение темы
+        document.getElementById('themeToggle').addEventListener('click', function() {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            
+            const themeIcon = this.querySelector('i');
+            if (themeIcon) {
+                themeIcon.className = newTheme === 'dark' ? 'fas fa-moon' : 'fas fa-sun';
+            }
+        });
+        
+        // === ПЛЕЕР ===
+        const audio = new Audio('assets/music.mp3');
+        let isPlaying = false;
+        let isMuted = false;
+        let lastVolume = 30;
+        const trackDuration = 100;
+        
+        // Форматирование времени
+        function formatTime(seconds) {
+            const mins = Math.floor(seconds / 60);
+            const secs = Math.floor(seconds % 60);
+            return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+        }
+        
+        // Обновление прогресса
+        function updateProgress() {
+            const progressBar = document.getElementById('progressBar');
+            const currentTimeEl = document.getElementById('currentTime');
+            const durationEl = document.getElementById('duration');
+            
+            if (!progressBar || !currentTimeEl || !durationEl) return;
+            
+            const currentTime = audio.currentTime || 0;
+            const duration = audio.duration || trackDuration;
+            
+            const progressPercent = (currentTime / duration) * 100;
+            progressBar.value = progressPercent;
+            currentTimeEl.textContent = formatTime(currentTime);
+            durationEl.textContent = formatTime(duration);
+        }
+        
+        // Воспроизведение/пауза
+        function togglePlay() {
+            const playIcon = document.querySelector('#playBtn i');
+            if (!playIcon) return;
+            
+            if (isPlaying) {
+                audio.pause();
+                playIcon.className = 'fas fa-play';
+                isPlaying = false;
+            } else {
+                audio.play()
+                    .then(() => {
+                        playIcon.className = 'fas fa-pause';
+                        isPlaying = true;
+                    })
+                    .catch(error => {
+                        console.log('Ошибка воспроизведения:', error);
+                    });
+            }
+        }
+        
+        // Громкость
+        function toggleMute() {
+            const muteIcon = document.querySelector('#muteBtn i');
+            const volumeBar = document.getElementById('volumeBar');
+            if (!muteIcon) return;
+            
+            if (isMuted) {
+                audio.volume = lastVolume / 100;
+                muteIcon.className = 'fas fa-volume-up';
+                if (volumeBar) volumeBar.value = lastVolume;
+                isMuted = false;
+            } else {
+                lastVolume = audio.volume * 100;
+                audio.volume = 0;
+                muteIcon.className = 'fas fa-volume-mute';
+                if (volumeBar) volumeBar.value = 0;
+                isMuted = true;
+            }
+        }
+        
+        // === ИНИЦИАЛИЗАЦИЯ ===
+        initTheme();
+        audio.volume = 0.3;
+        
+        // События аудио
+        audio.addEventListener('timeupdate', updateProgress);
+        audio.addEventListener('loadedmetadata', updateProgress);
+        audio.addEventListener('play', function() {
+            isPlaying = true;
+            const playIcon = document.querySelector('#playBtn i');
+            if (playIcon) playIcon.className = 'fas fa-pause';
+        });
+        audio.addEventListener('pause', function() {
+            isPlaying = false;
+            const playIcon = document.querySelector('#playBtn i');
+            if (playIcon) playIcon.className = 'fas fa-play';
+        });
+        audio.addEventListener('ended', function() {
+            isPlaying = false;
+            const playIcon = document.querySelector('#playBtn i');
+            if (playIcon) playIcon.className = 'fas fa-play';
+            audio.currentTime = 0;
+            updateProgress();
+        });
+        
+        // Обработчики кнопок
+        document.getElementById('playBtn').addEventListener('click', togglePlay);
+        document.getElementById('muteBtn').addEventListener('click', toggleMute);
+        
+        document.getElementById('prevBtn').addEventListener('click', function() {
+            audio.currentTime = 0;
+            updateProgress();
+        });
+        
+        document.getElementById('nextBtn').addEventListener('click', function() {
+            audio.currentTime = audio.duration || trackDuration;
+            updateProgress();
+        });
+        
+        document.getElementById('progressBar').addEventListener('input', function() {
+            const duration = audio.duration || trackDuration;
+            audio.currentTime = (this.value / 100) * duration;
+        });
+        
+        document.getElementById('volumeBar').addEventListener('input', function() {
+            audio.volume = this.value / 100;
+            if (this.value > 0 && isMuted) {
+                isMuted = false;
+                const muteIcon = document.querySelector('#muteBtn i');
+                if (muteIcon) muteIcon.className = 'fas fa-volume-up';
+            }
+        });
+        
+        // Автовоспроизведение по клику
+        document.addEventListener('click', function initAudio() {
+            if (audio.paused && !isPlaying) {
+                audio.play().catch(e => {
+                    console.log('Автовоспроизведение не удалось:', e);
+                });
+            }
+        }, { once: true });
+        
+        // === ЗАЩИТА ===
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'F12') {
+                e.preventDefault();
+                return false;
+            }
+        });
+        
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+            return false;
+        });
     </script>
-    
-    <script src="script.js"></script>
 </body>
     </html>
