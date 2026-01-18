@@ -3,9 +3,6 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // === ПЕРЕМЕННЫЕ ===
     const audio = new Audio('assets/music.mp3');
-    audio.crossOrigin = "anonymous";
-    audio.preload = "auto";
-    
     let isPlaying = false;
     let isMuted = false;
     let lastVolume = 30;
@@ -22,13 +19,10 @@ document.addEventListener('DOMContentLoaded', function() {
         muteBtn: document.getElementById('muteBtn'),
         prevBtn: document.getElementById('prevBtn'),
         nextBtn: document.getElementById('nextBtn'),
-        avatar: document.getElementById('avatar'),
-        albumCover: document.getElementById('albumCover'),
         primaryColor: document.getElementById('primaryColor'),
         bgColor: document.getElementById('bgColor'),
         saveTheme: document.getElementById('saveTheme'),
-        resetTheme: document.getElementById('resetTheme'),
-        securityMessage: document.getElementById('securityMessage')
+        resetTheme: document.getElementById('resetTheme')
     };
     
     // === ФУНКЦИИ ===
@@ -70,8 +64,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 })
                 .catch(error => {
                     console.log('Ошибка воспроизведения:', error);
-                    // Показываем сообщение о необходимости взаимодействия
-                    alert('Нажмите OK, затем кликните по странице чтобы включить музыку');
                 });
         }
     }
@@ -143,48 +135,6 @@ document.addEventListener('DOMContentLoaded', function() {
         
         return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
     }
-    
-    // Защита от DevTools
-    function setupSecurity() {
-        // Блокировка клавиш
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'F12' || 
-                (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C')) ||
-                (e.ctrlKey && e.key === 'U')) {
-                e.preventDefault();
-                if (elements.securityMessage) {
-                    elements.securityMessage.style.display = 'flex';
-                    setTimeout(() => {
-                        elements.securityMessage.style.display = 'none';
-                    }, 2000);
-                }
-                return false;
-            }
-        });
-        
-        // Блокировка правой кнопки
-        document.addEventListener('contextmenu', function(e) {
-            e.preventDefault();
-            return false;
-        });
-        
-        // Простая проверка DevTools
-        if (!/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
-            setInterval(() => {
-                const start = Date.now();
-                debugger;
-                if (Date.now() - start > 100) {
-                    if (elements.securityMessage) {
-                        elements.securityMessage.style.display = 'flex';
-                    }
-                }
-            }, 1000);
-        }
-    }
-    
-    // === НАСТРОЙКА АУДИО ===
-    // Убираем басы - используем стандартные настройки
-    audio.volume = 0.3; // Начальная громкость 30%
     
     // === ОБРАБОТЧИКИ СОБЫТИЙ ===
     
@@ -272,9 +222,58 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // Ошибки изображений
-    if (elements.avatar) {
-        elements.avatar.addEventListener('error', function() {
+    // События аудио
+    audio.addEventListener('timeupdate', updateProgress);
+    audio.addEventListener('loadedmetadata', updateProgress);
+    audio.addEventListener('play', function() {
+        isPlaying = true;
+        const playIcon = elements.playBtn?.querySelector('i');
+        if (playIcon) playIcon.className = 'fas fa-pause';
+    });
+    audio.addEventListener('pause', function() {
+        isPlaying = false;
+        const playIcon = elements.playBtn?.querySelector('i');
+        if (playIcon) playIcon.className = 'fas fa-play';
+    });
+    audio.addEventListener('ended', function() {
+        isPlaying = false;
+        const playIcon = elements.playBtn?.querySelector('i');
+        if (playIcon) playIcon.className = 'fas fa-play';
+        audio.currentTime = 0;
+        updateProgress();
+    });
+    
+    // === ИНИЦИАЛИЗАЦИЯ ===
+    initTheme();
+    audio.volume = 0.3;
+    updateProgress();
+    
+    // Автовоспроизведение по клику
+    document.addEventListener('click', function initAudio() {
+        if (audio.paused && !isPlaying) {
+            audio.play().catch(e => {
+                console.log('Автовоспроизведение не удалось:', e);
+            });
+        }
+        document.removeEventListener('click', initAudio);
+    }, { once: true });
+    
+    console.log('Сайт Ховлера готов!');
+    
+    // === ПРОСТАЯ ЗАЩИТА ОТ F12 ===
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'F12') {
+            e.preventDefault();
+            return false;
+        }
+    });
+    
+    // Блокировка правой кнопки
+    document.addEventListener('contextmenu', function(e) {
+        e.preventDefault();
+        return false;
+    });
+});on() {
             this.src = 'data:image/svg+xml;base64,' + btoa(`
                 <svg xmlns="http://www.w3.org/2000/svg" width="150" height="150" viewBox="0 0 150 150">
                     <rect width="150" height="150" fill="#00ff00" opacity="0.1"/>
