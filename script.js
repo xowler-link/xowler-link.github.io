@@ -1,39 +1,196 @@
 document.addEventListener('DOMContentLoaded', function() {
-    const themeToggle = document.getElementById('themeToggle');
-    const themeIcon = themeToggle.querySelector('i');
-    const playBtn = document.getElementById('playBtn');
-    const playIcon = playBtn.querySelector('i');
-    const progressBar = document.getElementById('progressBar');
-    const currentTimeEl = document.getElementById('currentTime');
-    const durationEl = document.getElementById('duration');
-    const volumeBar = document.getElementById('volumeBar');
-    const muteBtn = document.getElementById('muteBtn');
-    const muteIcon = muteBtn.querySelector('i');
-    const trackTitle = document.getElementById('trackTitle');
-    const trackArtist = document.getElementById('trackArtist');
-    const albumArt = document.getElementById('albumArt');
-    const albumCover = document.getElementById('albumCover');
-    const avatar = document.getElementById('avatar');
-
+    console.log('Сайт Ховлера загружается...');
+    
+    // === ПЕРЕМЕННЫЕ ===
     const audio = new Audio('assets/music.mp3');
+    audio.crossOrigin = "anonymous";
+    audio.preload = "auto";
+    
     let isPlaying = false;
     let isMuted = false;
-    let lastVolume = 70;
+    let lastVolume = 30;
+    const trackDuration = 100;
     
-    const trackDuration = 100; // 1:40 в секундах
-
+    // === ЭЛЕМЕНТЫ ===
+    const elements = {
+        themeToggle: document.getElementById('themeToggle'),
+        playBtn: document.getElementById('playBtn'),
+        progressBar: document.getElementById('progressBar'),
+        currentTimeEl: document.getElementById('currentTime'),
+        durationEl: document.getElementById('duration'),
+        volumeBar: document.getElementById('volumeBar'),
+        muteBtn: document.getElementById('muteBtn'),
+        prevBtn: document.getElementById('prevBtn'),
+        nextBtn: document.getElementById('nextBtn'),
+        avatar: document.getElementById('avatar'),
+        albumCover: document.getElementById('albumCover'),
+        primaryColor: document.getElementById('primaryColor'),
+        bgColor: document.getElementById('bgColor'),
+        saveTheme: document.getElementById('saveTheme'),
+        resetTheme: document.getElementById('resetTheme'),
+        securityMessage: document.getElementById('securityMessage')
+    };
+    
+    // === ФУНКЦИИ ===
+    
+    // Форматирование времени
+    function formatTime(seconds) {
+        const mins = Math.floor(seconds / 60);
+        const secs = Math.floor(seconds % 60);
+        return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+    }
+    
+    // Обновление прогресса
+    function updateProgress() {
+        if (!elements.progressBar || !elements.currentTimeEl || !elements.durationEl) return;
+        
+        const currentTime = audio.currentTime || 0;
+        const duration = audio.duration || trackDuration;
+        
+        const progressPercent = (currentTime / duration) * 100;
+        elements.progressBar.value = progressPercent;
+        elements.currentTimeEl.textContent = formatTime(currentTime);
+        elements.durationEl.textContent = formatTime(duration);
+    }
+    
+    // Воспроизведение/пауза
+    function togglePlay() {
+        const playIcon = elements.playBtn?.querySelector('i');
+        if (!playIcon) return;
+        
+        if (isPlaying) {
+            audio.pause();
+            playIcon.className = 'fas fa-play';
+            isPlaying = false;
+        } else {
+            audio.play()
+                .then(() => {
+                    playIcon.className = 'fas fa-pause';
+                    isPlaying = true;
+                })
+                .catch(error => {
+                    console.log('Ошибка воспроизведения:', error);
+                    // Показываем сообщение о необходимости взаимодействия
+                    alert('Нажмите OK, затем кликните по странице чтобы включить музыку');
+                });
+        }
+    }
+    
+    // Громкость
+    function toggleMute() {
+        const muteIcon = elements.muteBtn?.querySelector('i');
+        if (!muteIcon) return;
+        
+        if (isMuted) {
+            audio.volume = lastVolume / 100;
+            muteIcon.className = 'fas fa-volume-up';
+            if (elements.volumeBar) elements.volumeBar.value = lastVolume;
+            isMuted = false;
+        } else {
+            lastVolume = audio.volume * 100;
+            audio.volume = 0;
+            muteIcon.className = 'fas fa-volume-mute';
+            if (elements.volumeBar) elements.volumeBar.value = 0;
+            isMuted = true;
+        }
+    }
+    
+    // Инициализация темы
     function initTheme() {
         const savedTheme = localStorage.getItem('theme') || 'dark';
         document.documentElement.setAttribute('data-theme', savedTheme);
+        
+        // Загружаем кастомные цвета если есть
+        const customPrimary = localStorage.getItem('customPrimary');
+        const customBg = localStorage.getItem('customBg');
+        
+        if (customPrimary && customBg) {
+            applyCustomTheme(customPrimary, customBg);
+        }
+        
         updateThemeIcon(savedTheme);
     }
-
+    
+    // Обновление иконки темы
     function updateThemeIcon(theme) {
-        themeIcon.className = theme === 'dark' ? 'fas fa-moon' : 'fas fa-sun';
+        const themeIcon = elements.themeToggle?.querySelector('i');
+        if (themeIcon) {
+            themeIcon.className = theme === 'dark' ? 'fas fa-moon' : 'fas fa-sun';
+        }
     }
-
-    if (themeToggle) {
-        themeToggle.addEventListener('click', () => {
+    
+    // Применение кастомной темы
+    function applyCustomTheme(primary, bg) {
+        const root = document.documentElement;
+        root.style.setProperty('--primary-color', primary);
+        root.style.setProperty('--primary-dark', darkenColor(primary, 20));
+        root.style.setProperty('--bg-color', bg);
+        
+        // Сохраняем цвета
+        if (elements.primaryColor) elements.primaryColor.value = primary;
+        if (elements.bgColor) elements.bgColor.value = bg;
+    }
+    
+    // Затемнение цвета
+    function darkenColor(color, percent) {
+        let r = parseInt(color.slice(1, 3), 16);
+        let g = parseInt(color.slice(3, 5), 16);
+        let b = parseInt(color.slice(5, 7), 16);
+        
+        r = Math.floor(r * (100 - percent) / 100);
+        g = Math.floor(g * (100 - percent) / 100);
+        b = Math.floor(b * (100 - percent) / 100);
+        
+        return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
+    }
+    
+    // Защита от DevTools
+    function setupSecurity() {
+        // Блокировка клавиш
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'F12' || 
+                (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C')) ||
+                (e.ctrlKey && e.key === 'U')) {
+                e.preventDefault();
+                if (elements.securityMessage) {
+                    elements.securityMessage.style.display = 'flex';
+                    setTimeout(() => {
+                        elements.securityMessage.style.display = 'none';
+                    }, 2000);
+                }
+                return false;
+            }
+        });
+        
+        // Блокировка правой кнопки
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+            return false;
+        });
+        
+        // Простая проверка DevTools
+        if (!/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+            setInterval(() => {
+                const start = Date.now();
+                debugger;
+                if (Date.now() - start > 100) {
+                    if (elements.securityMessage) {
+                        elements.securityMessage.style.display = 'flex';
+                    }
+                }
+            }, 1000);
+        }
+    }
+    
+    // === НАСТРОЙКА АУДИО ===
+    // Убираем басы - используем стандартные настройки
+    audio.volume = 0.3; // Начальная громкость 30%
+    
+    // === ОБРАБОТЧИКИ СОБЫТИЙ ===
+    
+    // Тема
+    if (elements.themeToggle) {
+        elements.themeToggle.addEventListener('click', function() {
             const currentTheme = document.documentElement.getAttribute('data-theme');
             const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
             document.documentElement.setAttribute('data-theme', newTheme);
@@ -41,135 +198,83 @@ document.addEventListener('DOMContentLoaded', function() {
             updateThemeIcon(newTheme);
         });
     }
-
-    function formatTime(seconds) {
-        const mins = Math.floor(seconds / 60);
-        const secs = Math.floor(seconds % 60);
-        return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+    
+    // Плеер
+    if (elements.playBtn) {
+        elements.playBtn.addEventListener('click', togglePlay);
     }
-
-    function updateProgress() {
-        const currentTime = audio.currentTime;
-        const duration = audio.duration || trackDuration;
-        
-        const progressPercent = (currentTime / duration) * 100;
-        progressBar.value = progressPercent;
-        currentTimeEl.textContent = formatTime(currentTime);
-        durationEl.textContent = formatTime(duration);
-    }
-
-    function setTrackInfo() {
-        trackTitle.textContent = 'БРАТИКИ САЙФЕР';
-        trackArtist.textContent = 'KAMZ0NER, временно в рехабе, 7leaf, golki, мистер деньги, афоня рекордс, ONMYPLAK, mecinat';
-        
-        if (albumCover) {
-            albumCover.addEventListener('error', function() {
-                this.style.display = 'none';
-                albumArt.innerHTML = '<i class="fas fa-music"></i>';
-            });
-        }
-    }
-
-    function togglePlay() {
-        if (isPlaying) {
-            audio.pause();
-            playIcon.className = 'fas fa-play';
-        } else {
-            audio.play().then(() => {
-                playIcon.className = 'fas fa-pause';
-                isPlaying = true;
-            }).catch(error => {
-                console.log('Ошибка воспроизведения:', error);
-                // Показываем уведомление, если нужно
-                alert('Нажмите на страницу, чтобы разрешить воспроизведение музыки');
-            });
-        }
-    }
-
-    function toggleMute() {
-        if (isMuted) {
-            audio.volume = lastVolume / 100;
-            muteIcon.className = 'fas fa-volume-up';
-            volumeBar.value = lastVolume;
-        } else {
-            lastVolume = audio.volume * 100;
-            audio.volume = 0;
-            muteIcon.className = 'fas fa-volume-mute';
-            volumeBar.value = 0;
-        }
-        isMuted = !isMuted;
-    }
-
-    if (progressBar) {
-        progressBar.addEventListener('input', function() {
+    
+    if (elements.progressBar) {
+        elements.progressBar.addEventListener('input', function() {
             const duration = audio.duration || trackDuration;
             audio.currentTime = (this.value / 100) * duration;
         });
     }
-
-    if (volumeBar) {
-        volumeBar.addEventListener('input', function() {
+    
+    if (elements.volumeBar) {
+        elements.volumeBar.addEventListener('input', function() {
             audio.volume = this.value / 100;
             if (this.value > 0 && isMuted) {
                 isMuted = false;
-                muteIcon.className = 'fas fa-volume-up';
+                const muteIcon = elements.muteBtn?.querySelector('i');
+                if (muteIcon) muteIcon.className = 'fas fa-volume-up';
             }
         });
     }
-
-    audio.addEventListener('timeupdate', updateProgress);
-    audio.addEventListener('loadedmetadata', function() {
-        if (audio.duration) {
-            durationEl.textContent = formatTime(audio.duration);
-        } else {
-            durationEl.textContent = formatTime(trackDuration);
-        }
-    });
     
-    audio.addEventListener('ended', function() {
-        isPlaying = false;
-        playIcon.className = 'fas fa-play';
-        audio.currentTime = 0;
-        updateProgress();
-    });
-
-    audio.addEventListener('play', function() {
-        isPlaying = true;
-        playIcon.className = 'fas fa-pause';
-    });
-
-    audio.addEventListener('pause', function() {
-        isPlaying = false;
-        playIcon.className = 'fas fa-play';
-    });
-
-    if (playBtn) {
-        playBtn.addEventListener('click', togglePlay);
+    if (elements.muteBtn) {
+        elements.muteBtn.addEventListener('click', toggleMute);
     }
-
-    if (muteBtn) {
-        muteBtn.addEventListener('click', toggleMute);
-    }
-
-    const prevBtn = document.getElementById('prevBtn');
-    const nextBtn = document.getElementById('nextBtn');
-
-    if (prevBtn) {
-        prevBtn.addEventListener('click', function() {
+    
+    if (elements.prevBtn) {
+        elements.prevBtn.addEventListener('click', function() {
             audio.currentTime = 0;
             updateProgress();
         });
     }
-
-    if (nextBtn) {
-        nextBtn.addEventListener('click', function() {
+    
+    if (elements.nextBtn) {
+        elements.nextBtn.addEventListener('click', function() {
             audio.currentTime = audio.duration || trackDuration;
             updateProgress();
         });
     }
-
-    if (avatar) {
-        avatar.addEventListener('error', function() {
+    
+    // Кастомная тема
+    if (elements.saveTheme) {
+        elements.saveTheme.addEventListener('click', function() {
+            const primary = elements.primaryColor?.value || '#00ff00';
+            const bg = elements.bgColor?.value || '#0a0a0a';
+            
+            applyCustomTheme(primary, bg);
+            localStorage.setItem('customPrimary', primary);
+            localStorage.setItem('customBg', bg);
+            
+            alert('Тема сохранена!');
+        });
+    }
+    
+    if (elements.resetTheme) {
+        elements.resetTheme.addEventListener('click', function() {
+            localStorage.removeItem('customPrimary');
+            localStorage.removeItem('customBg');
+            
+            // Возвращаем стандартные цвета
+            const root = document.documentElement;
+            root.style.removeProperty('--primary-color');
+            root.style.removeProperty('--primary-dark');
+            root.style.removeProperty('--bg-color');
+            
+            if (elements.primaryColor) elements.primaryColor.value = '#00ff00';
+            if (elements.bgColor) elements.bgColor.value = '#0a0a0a';
+            
+            alert('Тема сброшена к стандартной');
+        });
+    }
+    
+    // Ошибки изображений
+    if (elements.avatar) {
+        elements.avatar.addEventListener('error', function() {
             this.src = 'data:image/svg+xml;base64,' + btoa(`
                 <svg xmlns="http://www.w3.org/2000/svg" width="150" height="150" viewBox="0 0 150 150">
                     <rect width="150" height="150" fill="#00ff00" opacity="0.1"/>
@@ -179,26 +284,51 @@ document.addEventListener('DOMContentLoaded', function() {
             `);
         });
     }
-
-    // Запускаем всё
-    initTheme();
-    setTrackInfo();
-    audio.volume = volumeBar ? volumeBar.value / 100 : 0.7;
-    updateProgress();
     
-    // Обработка клика по странице для автовоспроизведения
+    if (elements.albumCover) {
+        elements.albumCover.addEventListener('error', function() {
+            const albumArt = document.getElementById('albumArt');
+            if (albumArt) {
+                albumArt.innerHTML = '<i class="fas fa-music"></i>';
+            }
+        });
+    }
+    
+    // События аудио
+    audio.addEventListener('timeupdate', updateProgress);
+    audio.addEventListener('loadedmetadata', updateProgress);
+    audio.addEventListener('play', function() {
+        isPlaying = true;
+        const playIcon = elements.playBtn?.querySelector('i');
+        if (playIcon) playIcon.className = 'fas fa-pause';
+    });
+    audio.addEventListener('pause', function() {
+        isPlaying = false;
+        const playIcon = elements.playBtn?.querySelector('i');
+        if (playIcon) playIcon.className = 'fas fa-play';
+    });
+    audio.addEventListener('ended', function() {
+        isPlaying = false;
+        const playIcon = elements.playBtn?.querySelector('i');
+        if (playIcon) playIcon.className = 'fas fa-play';
+        audio.currentTime = 0;
+        updateProgress();
+    });
+    
+    // Автовоспроизведение по клику
     document.addEventListener('click', function initAudio() {
-        if (audio.paused) {
-            audio.play().catch(e => console.log('Автовоспроизведение заблокировано'));
+        if (audio.paused && !isPlaying) {
+            audio.play().catch(e => {
+                console.log('Автовоспроизведение не удалось:', e);
+            });
         }
         document.removeEventListener('click', initAudio);
-    });
-
-    // Для мобильных устройств
-    document.addEventListener('touchstart', function initAudioTouch() {
-        if (audio.paused) {
-            audio.play().catch(e => console.log('Автовоспроизведение заблокировано'));
-        }
-        document.removeEventListener('touchstart', initAudioTouch);
-    });
+    }, { once: true });
+    
+    // === ИНИЦИАЛИЗАЦИЯ ===
+    initTheme();
+    setupSecurity();
+    updateProgress();
+    
+    console.log('Сайт Ховлера готов!');
 });
