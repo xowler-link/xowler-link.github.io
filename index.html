@@ -12,12 +12,21 @@
     <link rel="icon" type="image/x-icon" href="assets/favicon.ico">
 </head>
 <body>
+    <canvas id="snowCanvas"></canvas>
+    
     <div class="container">
         <header class="header">
-            <div class="theme-switch">
-                <button id="themeToggle" aria-label="Переключить тему">
-                    <i class="fas fa-moon"></i>
-                </button>
+            <div class="header-controls">
+                <div class="theme-switch">
+                    <button id="themeToggle">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                </div>
+                <div class="snow-switch">
+                    <button id="snowToggle">
+                        <i class="fas fa-snowflake"></i>
+                    </button>
+                </div>
             </div>
         </header>
 
@@ -25,6 +34,7 @@
             <div class="profile-card">
                 <div class="avatar-container">
                     <img src="assets/avatar.jpg" alt="Аватар Ховлера" class="avatar" id="avatar" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNTAiIGhlaWdodD0iMTUwIiB2aWV3Qm94PSIwIDAgMTUwIDE1MCI+PHJlY3Qgd2lkdGg9IjE1MCIgaGVpZ2h0PSIxNTAiIGZpbGw9IiMwMGZmMDAiIG9wYWNpdHk9IjAuMSIvPjxjaXJjbGUgY3g9Ijc1IiBjeT0iNjAiIHI9IjMwIiBmaWxsPSIjMDBmZjAwIiBvcGFjaXR5PSIwLjMiLz48cGF0aCBkPSJNNDAgMTEwIFE3NSAxNDAgMTEwIDExMCIgc3Ryb2tlPSIjMDBmZjAwIiBzdHJva2Utd2lkdGg9IjQiIGZpbGw9Im5vbmUiLz48L3N2Zz4='">
+                    <div class="avatar-hat"></div>
                     <div class="avatar-status"></div>
                 </div>
                 
@@ -36,7 +46,7 @@
                 <div class="music-player" id="musicPlayer">
                     <div class="player-header">
                         <div class="album-art" id="albumArt">
-                            <img src="assets/j.jpg" alt="Обложка трека БРАТИКИ САЙФЕР" id="albumCover" onerror="this.style.display='none'; this.parentElement.innerHTML='<i class=\"fas fa-music\"></i>'">
+                            <i class="fas fa-music"></i>
                         </div>
                         <div class="track-info">
                             <h3 class="track-title" id="trackTitle">БРАТИКИ САЙФЕР</h3>
@@ -54,44 +64,173 @@
                         </div>
                         
                         <div class="control-buttons">
-                            <button id="prevBtn" class="control-btn" aria-label="Предыдущий трек">
+                            <button id="prevBtn" class="control-btn">
                                 <i class="fas fa-step-backward"></i>
                             </button>
-                            <button id="playBtn" class="control-btn play-btn" aria-label="Воспроизвести">
+                            <button id="playBtn" class="control-btn play-btn">
                                 <i class="fas fa-play"></i>
                             </button>
-                            <button id="nextBtn" class="control-btn" aria-label="Следующий трек">
+                            <button id="nextBtn" class="control-btn">
                                 <i class="fas fa-step-forward"></i>
                             </button>
                             <div class="volume-control">
-                                <button id="muteBtn" class="control-btn" aria-label="Звук">
+                                <button id="muteBtn" class="control-btn">
                                     <i class="fas fa-volume-up"></i>
                                 </button>
                                 <input type="range" id="volumeBar" class="volume-bar" value="30" min="0" max="100">
                             </div>
                         </div>
                     </div>
+                    
+                    <div class="playlist">
+                        <div class="playlist-track active" data-track="0">
+                            <div class="playlist-track-info">
+                                <div class="playlist-track-title">БРАТИКИ САЙФЕР</div>
+                                <div class="playlist-track-artist">KAMZ0NER, временно в рехабе, 7leaf, golki, мистер деньги, афоня рекордс, ONMYPLAK, mecinat</div>
+                            </div>
+                            <div class="playlist-track-duration">1:40</div>
+                        </div>
+                        <div class="playlist-track" data-track="1">
+                            <div class="playlist-track-info">
+                                <div class="playlist-track-title">большая с:</div>
+                                <div class="playlist-track-artist">KAMZ0NER, no9hook</div>
+                            </div>
+                            <div class="playlist-track-duration">1:23</div>
+                        </div>
+                        <div class="playlist-track" data-track="2">
+                            <div class="playlist-track-info">
+                                <div class="playlist-track-title">Чипсы</div>
+                                <div class="playlist-track-artist">Ernest Merkel, LilSemmi, KAMZ0NER, Cumottyyx, geoxantes, dabbackwood</div>
+                            </div>
+                            <div class="playlist-track-duration">3:41</div>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="links">
-                    <a href="https://t.me/nrwgz" class="link-btn telegram" target="_blank" rel="noopener">
+                    <a href="https://t.me/nrwgz" class="link-btn telegram">
                         <i class="fab fa-telegram"></i>
                         <span>Telegram аккаунт</span>
                     </a>
                     
-                    <a href="https://t.me/xowler_1" class="link-btn telegram-channel" target="_blank" rel="noopener">
+                    <a href="https://t.me/xowler_1" class="link-btn telegram-channel">
                         <i class="fab fa-telegram-plane"></i>
                         <span>Лайф-канал</span>
                     </a>
                     
-
+                    <a href="https://github.com/xowler-link" class="link-btn github">
+                        <i class="fab fa-github"></i>
+                        <span>GitHub профиль</span>
+                    </a>
                 </div>
             </div>
         </main>
     </div>
 
     <script>
-        // === ТЕМА ===
+        let snowActive = localStorage.getItem('snow') === 'true';
+        let snowAnimation = null;
+        
+        function initSnow() {
+            const canvas = document.getElementById('snowCanvas');
+            if (!canvas) return;
+            
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            
+            const ctx = canvas.getContext('2d');
+            const snowflakes = [];
+            
+            for (let i = 0; i < 150; i++) {
+                snowflakes.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    radius: Math.random() * 4 + 1,
+                    speed: Math.random() * 1 + 0.5,
+                    opacity: Math.random() * 0.5 + 0.5,
+                    wind: Math.random() * 0.5 - 0.25
+                });
+            }
+            
+            function drawSnowflakes() {
+                if (!snowActive) return;
+                
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+                
+                snowflakes.forEach(flake => {
+                    ctx.beginPath();
+                    ctx.arc(flake.x, flake.y, flake.radius, 0, Math.PI * 2);
+                    ctx.globalAlpha = flake.opacity;
+                    ctx.fill();
+                    ctx.globalAlpha = 1;
+                    
+                    flake.y += flake.speed;
+                    flake.x += flake.wind;
+                    
+                    if (flake.y > canvas.height) {
+                        flake.y = 0;
+                        flake.x = Math.random() * canvas.width;
+                    }
+                    
+                    if (flake.x > canvas.width) {
+                        flake.x = 0;
+                    } else if (flake.x < 0) {
+                        flake.x = canvas.width;
+                    }
+                });
+            }
+            
+            function animateSnow() {
+                drawSnowflakes();
+                snowAnimation = requestAnimationFrame(animateSnow);
+            }
+            
+            if (snowActive) {
+                animateSnow();
+            }
+            
+            window.addEventListener('resize', function() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            });
+            
+            updateSnowIcon();
+        }
+        
+        function toggleSnow() {
+            snowActive = !snowActive;
+            localStorage.setItem('snow', snowActive);
+            
+            const snowIcon = document.querySelector('#snowToggle i');
+            if (snowIcon) {
+                snowIcon.style.color = snowActive ? '#00ff00' : '';
+                snowIcon.style.transform = snowActive ? 'rotate(360deg)' : 'rotate(0deg)';
+            }
+            
+            if (snowActive) {
+                initSnow();
+            } else {
+                if (snowAnimation) {
+                    cancelAnimationFrame(snowAnimation);
+                    snowAnimation = null;
+                }
+                const canvas = document.getElementById('snowCanvas');
+                if (canvas) {
+                    const ctx = canvas.getContext('2d');
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                }
+            }
+        }
+        
+        function updateSnowIcon() {
+            const snowIcon = document.querySelector('#snowToggle i');
+            if (snowIcon) {
+                snowIcon.style.color = snowActive ? '#00ff00' : '';
+                snowIcon.style.transition = 'color 0.3s, transform 0.5s';
+            }
+        }
+        
         function initTheme() {
             const savedTheme = localStorage.getItem('theme') || 'dark';
             document.documentElement.setAttribute('data-theme', savedTheme);
@@ -102,7 +241,6 @@
             }
         }
         
-        // Переключение темы
         document.getElementById('themeToggle').addEventListener('click', function() {
             const currentTheme = document.documentElement.getAttribute('data-theme');
             const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
@@ -113,24 +251,62 @@
             const themeIcon = this.querySelector('i');
             if (themeIcon) {
                 themeIcon.className = newTheme === 'dark' ? 'fas fa-moon' : 'fas fa-sun';
+                themeIcon.style.transform = 'rotate(360deg)';
+                setTimeout(() => {
+                    themeIcon.style.transform = '';
+                }, 500);
             }
         });
         
-        // === ПЛЕЕР ===
-        const audio = new Audio('assets/music.mp3');
+        const tracks = [
+            {
+                file: 'assets/music.mp3',
+                title: 'БРАТИКИ САЙФЕР',
+                artist: 'KAMZ0NER, временно в рехабе, 7leaf, golki, мистер деньги, афоня рекордс, ONMYPLAK, mecinat',
+                duration: 100
+            },
+            {
+                file: 'assets/music2.mp3',
+                title: 'большая с:',
+                artist: 'KAMZ0NER, no9hook',
+                duration: 83
+            },
+            {
+                file: 'assets/music3.mp3',
+                title: 'Чипсы',
+                artist: 'Ernest Merkel, LilSemmi, KAMZ0NER, Cumottyyx, geoxantes, dabbackwood',
+                duration: 221
+            }
+        ];
+        
+        let currentTrackIndex = 0;
         let isPlaying = false;
         let isMuted = false;
         let lastVolume = 30;
-        const trackDuration = 100;
         
-        // Форматирование времени
+        const audio = new Audio(tracks[currentTrackIndex].file);
+        
         function formatTime(seconds) {
             const mins = Math.floor(seconds / 60);
             const secs = Math.floor(seconds % 60);
             return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
         }
         
-        // Обновление прогресса
+        function updateTrackInfo() {
+            const track = tracks[currentTrackIndex];
+            document.getElementById('trackTitle').textContent = track.title;
+            document.getElementById('trackArtist').textContent = track.artist;
+            document.getElementById('duration').textContent = formatTime(track.duration);
+            
+            document.querySelectorAll('.playlist-track').forEach((trackEl, index) => {
+                if (index === currentTrackIndex) {
+                    trackEl.classList.add('active');
+                } else {
+                    trackEl.classList.remove('active');
+                }
+            });
+        }
+        
         function updateProgress() {
             const progressBar = document.getElementById('progressBar');
             const currentTimeEl = document.getElementById('currentTime');
@@ -139,7 +315,7 @@
             if (!progressBar || !currentTimeEl || !durationEl) return;
             
             const currentTime = audio.currentTime || 0;
-            const duration = audio.duration || trackDuration;
+            const duration = audio.duration || tracks[currentTrackIndex].duration;
             
             const progressPercent = (currentTime / duration) * 100;
             progressBar.value = progressPercent;
@@ -147,7 +323,24 @@
             durationEl.textContent = formatTime(duration);
         }
         
-        // Воспроизведение/пауза
+        function changeTrack(index) {
+            if (index < 0) index = tracks.length - 1;
+            if (index >= tracks.length) index = 0;
+            
+            const wasPlaying = isPlaying;
+            
+            audio.pause();
+            currentTrackIndex = index;
+            audio.src = tracks[currentTrackIndex].file;
+            
+            updateTrackInfo();
+            updateProgress();
+            
+            if (wasPlaying) {
+                audio.play().catch(e => console.log('Ошибка воспроизведения:', e));
+            }
+        }
+        
         function togglePlay() {
             const playIcon = document.querySelector('#playBtn i');
             if (!playIcon) return;
@@ -168,7 +361,6 @@
             }
         }
         
-        // Громкость
         function toggleMute() {
             const muteIcon = document.querySelector('#muteBtn i');
             const volumeBar = document.getElementById('volumeBar');
@@ -188,11 +380,11 @@
             }
         }
         
-        // === ИНИЦИАЛИЗАЦИЯ ===
         initTheme();
+        initSnow();
         audio.volume = 0.3;
+        updateTrackInfo();
         
-        // События аудио
         audio.addEventListener('timeupdate', updateProgress);
         audio.addEventListener('loadedmetadata', updateProgress);
         audio.addEventListener('play', function() {
@@ -206,18 +398,63 @@
             if (playIcon) playIcon.className = 'fas fa-play';
         });
         audio.addEventListener('ended', function() {
-            isPlaying = false;
-            const playIcon = document.querySelector('#playBtn i');
-            if (playIcon) playIcon.className = 'fas fa-play';
-            audio.currentTime = 0;
-            updateProgress();
+            changeTrack(currentTrackIndex + 1);
         });
         
-        // Обработчики кнопок
         document.getElementById('playBtn').addEventListener('click', togglePlay);
         document.getElementById('muteBtn').addEventListener('click', toggleMute);
+        document.getElementById('snowToggle').addEventListener('click', toggleSnow);
         
         document.getElementById('prevBtn').addEventListener('click', function() {
+            changeTrack(currentTrackIndex - 1);
+        });
+        
+        document.getElementById('nextBtn').addEventListener('click', function() {
+            changeTrack(currentTrackIndex + 1);
+        });
+        
+        document.getElementById('progressBar').addEventListener('input', function() {
+            const duration = audio.duration || tracks[currentTrackIndex].duration;
+            audio.currentTime = (this.value / 100) * duration;
+        });
+        
+        document.getElementById('volumeBar').addEventListener('input', function() {
+            audio.volume = this.value / 100;
+            if (this.value > 0 && isMuted) {
+                isMuted = false;
+                const muteIcon = document.querySelector('#muteBtn i');
+                if (muteIcon) muteIcon.className = 'fas fa-volume-up';
+            }
+        });
+        
+        document.querySelectorAll('.playlist-track').forEach((trackEl, index) => {
+            trackEl.addEventListener('click', function() {
+                changeTrack(index);
+            });
+        });
+        
+        document.addEventListener('click', function initAudio() {
+            if (audio.paused && !isPlaying) {
+                audio.play().catch(e => {
+                    console.log('Автовоспроизведение не удалось:', e);
+                });
+            }
+        }, { once: true });
+        
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'F12') {
+                e.preventDefault();
+                return false;
+            }
+        });
+        
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+            return false;
+        });
+    </script>
+</body>
+</html>').addEventListener('click', function() {
             audio.currentTime = 0;
             updateProgress();
         });
