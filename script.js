@@ -12,12 +12,15 @@ document.addEventListener('DOMContentLoaded', function() {
     const trackTitle = document.getElementById('trackTitle');
     const trackArtist = document.getElementById('trackArtist');
     const albumArt = document.getElementById('albumArt');
+    const albumCover = document.getElementById('albumCover');
     const avatar = document.getElementById('avatar');
 
     const audio = new Audio('assets/music.mp3');
     let isPlaying = false;
     let isMuted = false;
     let lastVolume = 70;
+    
+    const trackDuration = 204;
 
     function initTheme() {
         const savedTheme = localStorage.getItem('theme') || 'dark';
@@ -45,59 +48,22 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function updateProgress() {
         const currentTime = audio.currentTime;
-        const duration = audio.duration;
+        const duration = audio.duration || trackDuration;
         
-        if (duration) {
-            const progressPercent = (currentTime / duration) * 100;
-            progressBar.value = progressPercent;
-            currentTimeEl.textContent = formatTime(currentTime);
-            durationEl.textContent = formatTime(duration);
-        }
+        const progressPercent = (currentTime / duration) * 100;
+        progressBar.value = progressPercent;
+        currentTimeEl.textContent = formatTime(currentTime);
+        durationEl.textContent = formatTime(duration);
     }
 
-    function updateTrackInfo() {
-        fetch('assets/music.mp3')
-            .then(response => response.blob())
-            .then(blob => {
-                if (window.jsmediatags) {
-                    window.jsmediatags.read(blob, {
-                        onSuccess: function(tag) {
-                            const title = tag.tags.title || 'Неизвестный трек';
-                            const artist = tag.tags.artist || 'Ховлер';
-                            
-                            trackTitle.textContent = title;
-                            trackArtist.textContent = artist;
-                            
-                            if (tag.tags.picture) {
-                                const picture = tag.tags.picture;
-                                const base64String = Array.from(picture.data)
-                                    .map(byte => String.fromCharCode(byte))
-                                    .join('');
-                                const imageUrl = 'data:' + picture.format + ';base64,' + window.btoa(base64String);
-                                
-                                const img = document.createElement('img');
-                                img.src = imageUrl;
-                                img.alt = 'Обложка альбома';
-                                albumArt.innerHTML = '';
-                                albumArt.appendChild(img);
-                            }
-                        },
-                        onError: function(error) {
-                            trackTitle.textContent = 'Мой трек';
-                            trackArtist.textContent = 'Ховлер';
-                        }
-                    });
-                } else {
-                    const script = document.createElement('script');
-                    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/jsmediatags/3.9.7/jsmediatags.min.js';
-                    script.onload = () => updateTrackInfo();
-                    document.head.appendChild(script);
-                }
-            })
-            .catch(error => {
-                trackTitle.textContent = 'Музыкальный трек';
-                trackArtist.textContent = 'Ховлер';
-            });
+    function setTrackInfo() {
+        trackTitle.textContent = 'БРАТИКИ САЙФЕР';
+        trackArtist.textContent = 'KAMZ0NER, временно в рехабе, 7leaf, golki, мистер деньги, афоня рекордс, ONMYPLAK, mecinat';
+        
+        albumCover.addEventListener('error', function() {
+            this.style.display = 'none';
+            albumArt.innerHTML = '<i class="fas fa-music"></i>';
+        });
     }
 
     function togglePlay() {
@@ -126,10 +92,8 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     progressBar.addEventListener('input', function() {
-        const duration = audio.duration;
-        if (duration) {
-            audio.currentTime = (this.value / 100) * duration;
-        }
+        const duration = audio.duration || trackDuration;
+        audio.currentTime = (this.value / 100) * duration;
     });
 
     volumeBar.addEventListener('input', function() {
@@ -141,7 +105,14 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     audio.addEventListener('timeupdate', updateProgress);
-    audio.addEventListener('loadedmetadata', updateProgress);
+    audio.addEventListener('loadedmetadata', function() {
+        if (audio.duration) {
+            durationEl.textContent = formatTime(audio.duration);
+        } else {
+            durationEl.textContent = '3:24';
+        }
+    });
+    
     audio.addEventListener('ended', function() {
         isPlaying = false;
         playIcon.className = 'fas fa-play';
@@ -158,7 +129,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     document.getElementById('nextBtn').addEventListener('click', function() {
-        audio.currentTime = audio.duration;
+        audio.currentTime = audio.duration || trackDuration;
         updateProgress();
     });
 
@@ -173,7 +144,15 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     initTheme();
-    updateTrackInfo();
+    setTrackInfo();
     audio.volume = volumeBar.value / 100;
     updateProgress();
+    
+    audio.addEventListener('canplay', function() {
+        durationEl.textContent = formatTime(audio.duration);
+    });
+    
+    audio.addEventListener('error', function() {
+        durationEl.textContent = '3:24';
+    });
 });
