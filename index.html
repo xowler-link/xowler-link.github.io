@@ -1,8 +1,10 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="ru" data-protected="true">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
     <title>ховлер</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -10,8 +12,114 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="icon" type="image/x-icon" href="assets/favicon.ico">
+    
+    <noscript>
+        <meta http-equiv="refresh" content="0; url=about:blank">
+        <style>body{display:none}</style>
+    </noscript>
+    
+    <style>
+        /* ЗАЩИТА УРОВЕНЬ 1: CSS защита */
+        body {
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        /* Скрываем элементы DevTools в Kiwi */
+        div[class*="devtools"],
+        div[class*="DevTools"],
+        div[class*="inspector"],
+        div[class*="console"],
+        *[class*="kiwi-dev"] {
+            display: none !important;
+            visibility: hidden !important;
+            opacity: 0 !important;
+            height: 0 !important;
+            width: 0 !important;
+            position: fixed !important;
+            top: -9999px !important;
+            left: -9999px !important;
+        }
+        
+        /* Блокировка выделения */
+        ::selection {
+            background: transparent;
+            color: inherit;
+        }
+        ::-moz-selection {
+            background: transparent;
+            color: inherit;
+        }
+        
+        /* Защитный overlay */
+        #hardcoreProtection {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            z-index: 2147483647;
+            color: red;
+            font-size: 2rem;
+            text-align: center;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+        
+        /* Элемент-ловушка */
+        .devtrap {
+            position: absolute;
+            top: -9999px;
+            left: -9999px;
+            width: 1px;
+            height: 1px;
+            overflow: hidden;
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+        /* Анти-инспект стили */
+        [data-inspect="blocked"] {
+            cursor: none !important;
+            pointer-events: none !important;
+        }
+        
+        input, textarea {
+            -webkit-user-select: text;
+            -moz-user-select: text;
+            -ms-user-select: text;
+            user-select: text;
+        }
+        
+        /* Запрет масштабирования на мобильных */
+        html {
+            touch-action: manipulation;
+        }
+    </style>
 </head>
-<body>
+<body oncontextmenu="return false" onselectstart="return false" ondragstart="return false">
+    <!-- ЗАЩИТА УРОВЕНЬ 2: HTML ловушки -->
+    <div id="hardcoreProtection">
+        <div style="font-size:4rem;">⚠️</div>
+        <div>НЕЛЕГАЛЬНЫЙ ДОСТУП</div>
+        <div style="font-size:1rem; margin-top:20px;">Система безопасности заблокировала доступ</div>
+    </div>
+    
+    <!-- Ловушки для DevTools -->
+    <div class="devtrap" data-devtools-trap="true" id="trap1">DEVTOOLS_TRAP_1</div>
+    <div class="devtrap" data-devtools-trap="true" id="trap2">DEVTOOLS_TRAP_2</div>
+    <div class="devtrap" data-devtools-trap="true" id="trap3">DEVTOOLS_TRAP_3</div>
+    
+    <!-- Пустой iframe для блокировки -->
+    <iframe src="about:blank" style="display:none" id="blockerFrame"></iframe>
+
     <div class="container">
         <header class="header">
             <div class="theme-switch">
@@ -93,66 +201,320 @@
         </main>
     </div>
 
+    <!-- ЗАЩИТА УРОВЕНЬ 3: Встроенный JS защита -->
     <script>
-        (function() {
-            function activateSecurity() {
-                document.body.innerHTML = '';
-                document.body.style.background = '#000';
-                document.body.style.color = '#f00';
-                document.body.style.display = 'flex';
-                document.body.style.alignItems = 'center';
-                document.body.style.justifyContent = 'center';
-                document.body.style.fontSize = '2rem';
-                document.body.style.textAlign = 'center';
-                document.body.style.padding = '20px';
-                document.body.innerHTML = `
-                    <div>
-                        <div style="font-size:4rem;"></div>
-                        <div>DEVTOOLS ЗАПРЕЩЕНЫ</div>
-                        <div style="font-size:1rem; margin-top:20px;">Попытка обхода защиты</div>
-                    </div>
-                `;
-                window.location.href = 'about:blank';
-            }
+        // ===== ОСНОВНАЯ ФУНКЦИЯ ЗАЩИТЫ =====
+        function activateHardProtection() {
+            const protection = document.getElementById('hardcoreProtection');
+            protection.style.display = 'flex';
             
-            setInterval(() => {
-                const start = new Date().getTime();
-                debugger;
-                const end = new Date().getTime();
-                if (end - start > 100) {
-                    activateSecurity();
+            // Блокируем все
+            document.body.style.overflow = 'hidden';
+            document.documentElement.style.overflow = 'hidden';
+            
+            // Пытаемся перенаправить
+            setTimeout(() => {
+                try {
+                    window.location.replace('about:blank');
+                } catch(e) {
+                    // Если не удалось, просто очищаем
+                    document.body.innerHTML = '';
+                    document.body.appendChild(protection);
                 }
             }, 1000);
             
+            // Дополнительная блокировка для Kiwi
+            try {
+                if (window.console) {
+                    console.clear();
+                    console.log = console.warn = console.error = function(){};
+                }
+            } catch(e) {}
+        }
+        
+        // ===== УРОВЕНЬ 1: Проверка debugger =====
+        function debuggerCheck() {
+            const start = performance.now();
+            (function(){})["constructor"]("debugger")();
+            const end = performance.now();
+            if (end - start > 100) {
+                return true;
+            }
+            return false;
+        }
+        
+        // ===== УРОВЕНЬ 2: Обнаружение DevTools =====
+        function detectDevTools() {
+            // Метод 1: Размеры окна
+            const widthDiff = window.outerWidth - window.innerWidth;
+            const heightDiff = window.outerHeight - window.innerHeight;
+            
+            // Для Kiwi Browser на мобильных
+            if (widthDiff > 200 || heightDiff > 200) {
+                return true;
+            }
+            
+            // Метод 2: Проверка через Date (Kiwi иногда показывает разное время)
+            const start = Date.now();
+            debugger;
+            if (Date.now() - start > 100) {
+                return true;
+            }
+            
+            // Метод 3: Проверка доступности eval (в DevTools работает иначе)
+            try {
+                eval("(() => {})");
+            } catch(e) {
+                return true;
+            }
+            
+            return false;
+        }
+        
+        // ===== УРОВЕНЬ 3: Блокировка клавиш =====
+        function setupKeyProtection() {
+            const blockedKeys = ['F12', 'F8', 'F5'];
+            const blockedCombos = [
+                {ctrl: true, shift: true, key: 'I'},
+                {ctrl: true, shift: true, key: 'J'},
+                {ctrl: true, shift: true, key: 'C'},
+                {ctrl: true, key: 'U'},
+                {ctrl: true, key: 'S'},
+                {ctrl: true, key: 'P'}
+            ];
+            
             document.addEventListener('keydown', function(e) {
-                if (e.key === 'F12' || 
-                    (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C')) ||
-                    (e.ctrlKey && e.key === 'U')) {
+                // Блокировка F-клавиш
+                if (blockedKeys.includes(e.key)) {
                     e.preventDefault();
-                    activateSecurity();
+                    e.stopPropagation();
+                    e.stopImmediatePropagation();
+                    activateHardProtection();
                     return false;
                 }
-            });
+                
+                // Блокировка комбинаций
+                for (const combo of blockedCombos) {
+                    if ((combo.ctrl ? e.ctrlKey : true) &&
+                        (combo.shift ? e.shiftKey : true) &&
+                        e.key === combo.key) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        e.stopImmediatePropagation();
+                        activateHardProtection();
+                        return false;
+                    }
+                }
+                
+                // Дополнительная защита для Kiwi (Alt+Menu и т.д.)
+                if (e.altKey && (e.key === 'm' || e.key === 'M')) {
+                    e.preventDefault();
+                    activateHardProtection();
+                    return false;
+                }
+            }, true);
             
-            document.addEventListener('contextmenu', function(e) {
-                e.preventDefault();
-                return false;
-            });
+            // Дублируем обработчик для максимальной защиты
+            window.addEventListener('keydown', function(e) {
+                if (e.key === 'F12') {
+                    activateHardProtection();
+                }
+            }, true);
+        }
+        
+        // ===== УРОВЕНЬ 4: Защита от Kiwi Browser =====
+        function kiwiBrowserProtection() {
+            // Проверяем мобильные признаки
+            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
             
-            let widthThreshold = window.outerWidth - window.innerWidth > 160;
-            let heightThreshold = window.outerHeight - window.innerHeight > 160;
-            const checkDevTools = () => {
-                widthThreshold = window.outerWidth - window.innerWidth > 160;
-                heightThreshold = window.outerHeight - window.innerHeight > 160;
-                if (widthThreshold || heightThreshold) {
-                    activateSecurity();
+            if (isMobile) {
+                // Дополнительные проверки для Kiwi
+                setInterval(() => {
+                    // Проверка изменений в DOM (Kiwi добавляет свои элементы)
+                    const traps = document.querySelectorAll('.devtrap');
+                    traps.forEach(trap => {
+                        if (trap.offsetParent !== null || 
+                            trap.style.display !== 'none' ||
+                            trap.getBoundingClientRect().width > 0) {
+                            activateHardProtection();
+                        }
+                    });
+                    
+                    // Проверка через ошибки (в DevTools поведение другое)
+                    try {
+                        throw new Error('security_check');
+                    } catch(e) {
+                        if (e.stack && e.stack.includes('devtools')) {
+                            activateHardProtection();
+                        }
+                    }
+                }, 500);
+            }
+        }
+        
+        // ===== УРОВЕНЬ 5: Защита от изменения кода =====
+        function codeIntegrityCheck() {
+            const originalHTML = document.documentElement.outerHTML;
+            const scriptCheck = document.querySelectorAll('script').length;
+            
+            setInterval(() => {
+                // Проверка целостности HTML
+                if (document.documentElement.outerHTML.length < originalHTML.length * 0.5) {
+                    activateHardProtection();
+                }
+                
+                // Проверка количества скриптов
+                if (document.querySelectorAll('script').length > scriptCheck + 2) {
+                    activateHardProtection();
+                }
+                
+                // Проверка стилей защиты
+                const styleCheck = document.querySelector('[data-inspect="blocked"]');
+                if (!styleCheck) {
+                    activateHardProtection();
+                }
+            }, 1000);
+        }
+        
+        // ===== УРОВЕНЬ 6: Сетевые проверки =====
+        function networkProtection() {
+            // Блокировка fetch/XMLHttpRequest из консоли
+            const originalFetch = window.fetch;
+            window.fetch = function(...args) {
+                const stack = new Error().stack;
+                if (stack && stack.includes('devtools') || stack.includes('console')) {
+                    activateHardProtection();
+                    return Promise.reject(new Error('Security block'));
+                }
+                return originalFetch.apply(this, args);
+            };
+            
+            // Защита XMLHttpRequest
+            const originalXHR = window.XMLHttpRequest;
+            window.XMLHttpRequest = class extends originalXHR {
+                open(...args) {
+                    const stack = new Error().stack;
+                    if (stack && stack.includes('devtools')) {
+                        activateHardProtection();
+                        return;
+                    }
+                    super.open(...args);
                 }
             };
-            checkDevTools();
-            window.addEventListener('resize', checkDevTools);
-        })();
+        }
+        
+        // ===== ЗАПУСК ВСЕХ СИСТЕМ ЗАЩИТЫ =====
+        function startSecuritySystem() {
+            console.log('[SECURITY] Система защиты активирована');
+            
+            // 1. Проверка debugger
+            setInterval(() => {
+                if (debuggerCheck() || detectDevTools()) {
+                    activateHardProtection();
+                }
+            }, 500);
+            
+            // 2. Настройка защиты клавиш
+            setupKeyProtection();
+            
+            // 3. Защита от Kiwi
+            kiwiBrowserProtection();
+            
+            // 4. Проверка целостности кода
+            codeIntegrityCheck();
+            
+            // 5. Сетевая защита
+            networkProtection();
+            
+            // 6. Постоянный мониторинг
+            let lastWidth = window.outerWidth;
+            let lastHeight = window.outerHeight;
+            
+            setInterval(() => {
+                // Мониторинг изменений размеров
+                if (window.outerWidth !== lastWidth || window.outerHeight !== lastHeight) {
+                    if (Math.abs(window.outerWidth - window.innerWidth) > 200 ||
+                        Math.abs(window.outerHeight - window.innerHeight) > 200) {
+                        activateHardProtection();
+                    }
+                    lastWidth = window.outerWidth;
+                    lastHeight = window.outerHeight;
+                }
+                
+                // Проверка фокуса (DevTools могут влиять)
+                if (!document.hasFocus()) {
+                    setTimeout(() => {
+                        if (!document.hasFocus()) {
+                            activateHardProtection();
+                        }
+                    }, 100);
+                }
+            }, 300);
+            
+            // 7. Защита от удаления защиты
+            Object.defineProperty(window, 'stopSecurity', {
+                get() {
+                    activateHardProtection();
+                    return function() {};
+                },
+                configurable: false,
+                enumerable: false
+            });
+        }
+        
+        // Запускаем после загрузки
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', startSecuritySystem);
+        } else {
+            startSecuritySystem();
+        }
+        
+        // Дублируем запуск
+        window.addEventListener('load', startSecuritySystem);
+        
+        // ===== ДОПОЛНИТЕЛЬНАЯ ЗАЩИТА =====
+        // Блокировка контекстного меню
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+            activateHardProtection();
+            return false;
+        }, true);
+        
+        // Блокировка перетаскивания
+        document.addEventListener('dragstart', function(e) {
+            e.preventDefault();
+            return false;
+        }, true);
+        
+        // Блокировка выделения
+        document.addEventListener('selectstart', function(e) {
+            e.preventDefault();
+            return false;
+        }, true);
+        
+        // Блокировка копирования
+        document.addEventListener('copy', function(e) {
+            e.preventDefault();
+            return false;
+        }, true);
+        
+        // Запрет открытия в iframe
+        if (window.top !== window.self) {
+            document.body.innerHTML = '';
+            window.top.location = window.self.location;
+        }
+        
+        // Обфускация кода (частичная)
+        const _0x1a2b3c = ['log', 'warn', 'error', 'info', 'debug'];
+        _0x1a2b3c.forEach(method => {
+            if (console[method]) {
+                console[method] = function() {
+                    activateHardProtection();
+                };
+            }
+        });
     </script>
     
     <script src="script.js"></script>
 </body>
-</html>
+    </html>
