@@ -36,7 +36,7 @@
                 <div class="music-player" id="musicPlayer">
                     <div class="player-header">
                         <div class="album-art" id="albumArt">
-                            <img src="assets/j.jpg" alt="Обложка трека БРАТИКИ САЙФЕР" id="albumCover">
+                            <img src="assets/j.jpg" alt="Обложка трека БРАТИКИ САЙФЕР" id="albumCover" onerror="this.style.display='none'; document.getElementById('albumArt').innerHTML='<i class=\"fas fa-music\"></i>'">
                         </div>
                         <div class="track-info">
                             <h3 class="track-title" id="trackTitle">БРАТИКИ САЙФЕР</h3>
@@ -49,7 +49,7 @@
                             <input type="range" id="progressBar" class="progress-bar" value="0" min="0" max="100">
                             <div class="time-display">
                                 <span id="currentTime">0:00</span>
-                                <span id="duration">3:24</span>
+                                <span id="duration">1:40</span>
                             </div>
                         </div>
                         
@@ -94,44 +94,23 @@
     </div>
 
     <script>
+        // Простая защита от DevTools
         (function() {
-            function activateSecurity() {
+            function blockAccess() {
                 document.body.innerHTML = '';
-                document.body.style.background = '#000';
-                document.body.style.color = '#f00';
-                document.body.style.display = 'flex';
-                document.body.style.alignItems = 'center';
-                document.body.style.justifyContent = 'center';
-                document.body.style.fontSize = '2rem';
-                document.body.style.textAlign = 'center';
-                document.body.style.padding = '20px';
-                document.body.innerHTML = `
-                    <div>
-                        <div style="font-size:4rem;">🚫</div>
-                        <div>DEVTOOLS ЗАПРЕЩЕНЫ</div>
-                        <div style="font-size:1rem; margin-top:20px;">Попытка обхода защиты</div>
-                    </div>
-                `;
-                window.location.href = 'about:blank';
+                document.body.style.cssText = 'background:#000; color:#f00; display:flex; align-items:center; justify-content:center; font-size:2rem; text-align:center; padding:20px; height:100vh;';
+                document.body.innerHTML = '<div><div style="font-size:4rem;">🚫</div><div>ДОСТУП ЗАПРЕЩЕН</div></div>';
+                window.stop();
             }
             
-            // Проверка debugger
-            setInterval(() => {
-                const start = new Date().getTime();
-                debugger;
-                const end = new Date().getTime();
-                if (end - start > 100) {
-                    activateSecurity();
-                }
-            }, 1000);
-            
-            // Блокировка клавиш
+            // Проверка F12 и горячих клавиш
             document.addEventListener('keydown', function(e) {
                 if (e.key === 'F12' || 
-                    (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C')) ||
+                    (e.ctrlKey && e.shiftKey && e.key === 'I') ||
+                    (e.ctrlKey && e.shiftKey && e.key === 'J') ||
                     (e.ctrlKey && e.key === 'U')) {
                     e.preventDefault();
-                    activateSecurity();
+                    blockAccess();
                     return false;
                 }
             });
@@ -142,88 +121,23 @@
                 return false;
             });
             
-            // Проверка DevTools по размеру окна (только на десктопе)
-            let widthThreshold = window.outerWidth - window.innerWidth > 160;
-            let heightThreshold = window.outerHeight - window.innerHeight > 160;
-            
-            const checkDevTools = () => {
-                // На мобильных не проверяем, чтобы не было ложных срабатываний
-                const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-                
-                if (!isMobile) {
-                    widthThreshold = window.outerWidth - window.innerWidth > 160;
-                    heightThreshold = window.outerHeight - window.innerHeight > 160;
-                    
-                    if (widthThreshold || heightThreshold) {
-                        activateSecurity();
+            // Проверка debugger (только на десктопе)
+            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            if (!isMobile) {
+                setInterval(() => {
+                    const start = performance.now();
+                    debugger;
+                    if (performance.now() - start > 100) {
+                        blockAccess();
                     }
-                }
-            };
-            
-            checkDevTools();
-            window.addEventListener('resize', checkDevTools);
+                }, 1000);
+            }
         })();
     </script>
     
     <script src="script.js"></script>
 </body>
-</html>ey && e.shiftKey && e.key === 'J') {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        activateHardProtection();
-                        return false;
-                    }
-                    
-                    // Блокировка Ctrl+U только на десктопе
-                    if (e.ctrlKey && e.key === 'U') {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        activateHardProtection();
-                        return false;
-                    }
-                }, true);
-            }
-            
-            // Для всех устройств блокируем контекстное меню
-            document.addEventListener('contextmenu', function(e) {
-                if (!isMobileDevice() || isKiwiBrowser()) {
-                    e.preventDefault();
-                    return false;
-                }
-            }, true);
-        }
-        
-        // ===== ЗАПУСК УМНОЙ СИСТЕМЫ ЗАЩИТЫ =====
-        function startSmartSecuritySystem() {
-            console.log('[SECURITY] Умная система защиты активирована');
-            
-            // 1. Настройка защиты клавиш
-            setupSmartKeyProtection();
-            
-            // 2. Проверка DevTools с интервалом
-            let lastWidth = window.outerWidth;
-            let lastHeight = window.outerHeight;
-            let detectionCount = 0;
-            
-            const checkInterval = setInterval(() => {
-                // Проверяем изменение размеров (признак DevTools)
-                if (window.outerWidth !== lastWidth || window.outerHeight !== lastHeight) {
-                    if (smartDetectDevTools()) {
-                        detectionCount++;
-                        
-                        // На мобильных нужно больше подтверждений
-                        const threshold = isMobileDevice() ? 3 : 2;
-                        
-                        if (detectionCount >= threshold) {
-                            activateHardProtection();
-                            detectionCount = 0;
-                        }
-                    }
-                    
-                    lastWidth = window.outerWidth;
-                    lastHeight = window.outerHeight;
-                } else {
-                    detectionCount = 0;
+</html>                    detectionCount = 0;
                 }
                 
                 // Проверка debugger (только на десктопе)
