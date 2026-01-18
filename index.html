@@ -1,10 +1,8 @@
 <!DOCTYPE html>
-<html lang="ru" data-protected="true">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ховлер</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -12,72 +10,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="icon" type="image/x-icon" href="assets/favicon.ico">
-    
-    <noscript>
-        <meta http-equiv="refresh" content="0; url=about:blank">
-        <style>body{display:none}</style>
-    </noscript>
-    
-    <style>
-        /* ЗАЩИТА УРОВЕНЬ 1: CSS защита */
-        body {
-            -webkit-touch-callout: none;
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-            user-select: none;
-            -webkit-tap-highlight-color: transparent;
-        }
-        
-        /* Блокировка выделения */
-        ::selection {
-            background: transparent;
-            color: inherit;
-        }
-        ::-moz-selection {
-            background: transparent;
-            color: inherit;
-        }
-        
-        /* Защитный overlay */
-        #hardcoreProtection {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: #000;
-            z-index: 2147483647;
-            color: red;
-            font-size: 2rem;
-            text-align: center;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-        }
-        
-        input, textarea {
-            -webkit-user-select: text;
-            -moz-user-select: text;
-            -ms-user-select: text;
-            user-select: text;
-        }
-        
-        /* Запрет масштабирования на мобильных */
-        html {
-            touch-action: manipulation;
-        }
-    </style>
 </head>
-<body oncontextmenu="return false" onselectstart="return false" ondragstart="return false">
-    <!-- ЗАЩИТА УРОВЕНЬ 2: HTML ловушки -->
-    <div id="hardcoreProtection">
-        <div style="font-size:4rem;">⚠️</div>
-        <div>НЕЛЕГАЛЬНЫЙ ДОСТУП</div>
-        <div style="font-size:1rem; margin-top:20px;">Система безопасности заблокировала доступ</div>
-    </div>
-
+<body>
     <div class="container">
         <header class="header">
             <div class="theme-switch">
@@ -159,85 +93,81 @@
         </main>
     </div>
 
-    <!-- УМНАЯ ЗАЩИТА: Только для Desktop и при попытке открыть DevTools -->
     <script>
-        // ===== ОСНОВНАЯ ФУНКЦИЯ ЗАЩИТЫ =====
-        function activateHardProtection() {
-            const protection = document.getElementById('hardcoreProtection');
-            protection.style.display = 'flex';
+        (function() {
+            function activateSecurity() {
+                document.body.innerHTML = '';
+                document.body.style.background = '#000';
+                document.body.style.color = '#f00';
+                document.body.style.display = 'flex';
+                document.body.style.alignItems = 'center';
+                document.body.style.justifyContent = 'center';
+                document.body.style.fontSize = '2rem';
+                document.body.style.textAlign = 'center';
+                document.body.style.padding = '20px';
+                document.body.innerHTML = `
+                    <div>
+                        <div style="font-size:4rem;">🚫</div>
+                        <div>DEVTOOLS ЗАПРЕЩЕНЫ</div>
+                        <div style="font-size:1rem; margin-top:20px;">Попытка обхода защиты</div>
+                    </div>
+                `;
+                window.location.href = 'about:blank';
+            }
             
-            // Блокируем все
-            document.body.style.overflow = 'hidden';
-            document.documentElement.style.overflow = 'hidden';
-            
-            // Через 3 секунды возвращаем обратно (для мобильных)
-            setTimeout(() => {
-                protection.style.display = 'none';
-                document.body.style.overflow = '';
-                document.documentElement.style.overflow = '';
-            }, 3000);
-        }
-        
-        // ===== ПРОВЕРКА НА МОБИЛЬНЫЕ УСТРОЙСТВА =====
-        function isMobileDevice() {
-            return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-        }
-        
-        // ===== ПРОВЕРКА НА KIWI BROWSER =====
-        function isKiwiBrowser() {
-            const ua = navigator.userAgent.toLowerCase();
-            return ua.includes('kiwi') || ua.includes('xwalk');
-        }
-        
-        // ===== УМНОЕ ОБНАРУЖЕНИЕ DEVTOOLS =====
-        function smartDetectDevTools() {
-            // На мобильных - менее строгая проверка
-            if (isMobileDevice()) {
-                const widthDiff = Math.abs(window.outerWidth - window.innerWidth);
-                const heightDiff = Math.abs(window.outerHeight - window.innerHeight);
-                
-                // На мобильных DevTools обычно больше 300px
-                if (widthDiff > 300 || heightDiff > 300) {
-                    return true;
+            // Проверка debugger
+            setInterval(() => {
+                const start = new Date().getTime();
+                debugger;
+                const end = new Date().getTime();
+                if (end - start > 100) {
+                    activateSecurity();
                 }
+            }, 1000);
+            
+            // Блокировка клавиш
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'F12' || 
+                    (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C')) ||
+                    (e.ctrlKey && e.key === 'U')) {
+                    e.preventDefault();
+                    activateSecurity();
+                    return false;
+                }
+            });
+            
+            // Блокировка правой кнопки
+            document.addEventListener('contextmenu', function(e) {
+                e.preventDefault();
                 return false;
-            }
+            });
             
-            // На десктопе - строгая проверка
-            const widthDiff = Math.abs(window.outerWidth - window.innerWidth);
-            const heightDiff = Math.abs(window.outerHeight - window.innerHeight);
+            // Проверка DevTools по размеру окна (только на десктопе)
+            let widthThreshold = window.outerWidth - window.innerWidth > 160;
+            let heightThreshold = window.outerHeight - window.innerHeight > 160;
             
-            // На десктопе DevTools обычно больше 100px
-            if (widthDiff > 100 || heightDiff > 100) {
-                return true;
-            }
-            
-            return false;
-        }
-        
-        // ===== БЛОКИРОВКА ТОЛЬКО КЛАВИШ DEVTOOLS =====
-        function setupSmartKeyProtection() {
-            // Только на десктопе блокируем F12
-            if (!isMobileDevice()) {
-                document.addEventListener('keydown', function(e) {
-                    // Блокировка F12
-                    if (e.key === 'F12') {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        activateHardProtection();
-                        return false;
-                    }
+            const checkDevTools = () => {
+                // На мобильных не проверяем, чтобы не было ложных срабатываний
+                const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+                
+                if (!isMobile) {
+                    widthThreshold = window.outerWidth - window.innerWidth > 160;
+                    heightThreshold = window.outerHeight - window.innerHeight > 160;
                     
-                    // Блокировка Ctrl+Shift+I только на десктопе
-                    if (e.ctrlKey && e.shiftKey && e.key === 'I') {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        activateHardProtection();
-                        return false;
+                    if (widthThreshold || heightThreshold) {
+                        activateSecurity();
                     }
-                    
-                    // Блокировка Ctrl+Shift+J только на десктопе
-                    if (e.ctrlKey && e.shiftKey && e.key === 'J') {
+                }
+            };
+            
+            checkDevTools();
+            window.addEventListener('resize', checkDevTools);
+        })();
+    </script>
+    
+    <script src="script.js"></script>
+</body>
+</html>ey && e.shiftKey && e.key === 'J') {
                         e.preventDefault();
                         e.stopPropagation();
                         activateHardProtection();
