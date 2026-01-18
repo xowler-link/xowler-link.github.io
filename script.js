@@ -1,9 +1,4 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // Проверяем, не активирована ли защита
-    if (document.getElementById('hardcoreProtection').style.display === 'flex') {
-        return;
-    }
-    
     const themeToggle = document.getElementById('themeToggle');
     const themeIcon = themeToggle.querySelector('i');
     const playBtn = document.getElementById('playBtn');
@@ -25,7 +20,7 @@ document.addEventListener('DOMContentLoaded', function() {
     let isMuted = false;
     let lastVolume = 70;
     
-    const trackDuration = 204;
+    const trackDuration = 100; // 1:40 в секундах
 
     function initTheme() {
         const savedTheme = localStorage.getItem('theme') || 'dark';
@@ -37,13 +32,15 @@ document.addEventListener('DOMContentLoaded', function() {
         themeIcon.className = theme === 'dark' ? 'fas fa-moon' : 'fas fa-sun';
     }
 
-    themeToggle.addEventListener('click', () => {
-        const currentTheme = document.documentElement.getAttribute('data-theme');
-        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-        document.documentElement.setAttribute('data-theme', newTheme);
-        localStorage.setItem('theme', newTheme);
-        updateThemeIcon(newTheme);
-    });
+    if (themeToggle) {
+        themeToggle.addEventListener('click', () => {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            updateThemeIcon(newTheme);
+        });
+    }
 
     function formatTime(seconds) {
         const mins = Math.floor(seconds / 60);
@@ -65,10 +62,12 @@ document.addEventListener('DOMContentLoaded', function() {
         trackTitle.textContent = 'БРАТИКИ САЙФЕР';
         trackArtist.textContent = 'KAMZ0NER, временно в рехабе, 7leaf, golki, мистер деньги, афоня рекордс, ONMYPLAK, mecinat';
         
-        albumCover.addEventListener('error', function() {
-            this.style.display = 'none';
-            albumArt.innerHTML = '<i class="fas fa-music"></i>';
-        });
+        if (albumCover) {
+            albumCover.addEventListener('error', function() {
+                this.style.display = 'none';
+                albumArt.innerHTML = '<i class="fas fa-music"></i>';
+            });
+        }
     }
 
     function togglePlay() {
@@ -76,10 +75,15 @@ document.addEventListener('DOMContentLoaded', function() {
             audio.pause();
             playIcon.className = 'fas fa-play';
         } else {
-            audio.play();
-            playIcon.className = 'fas fa-pause';
+            audio.play().then(() => {
+                playIcon.className = 'fas fa-pause';
+                isPlaying = true;
+            }).catch(error => {
+                console.log('Ошибка воспроизведения:', error);
+                // Показываем уведомление, если нужно
+                alert('Нажмите на страницу, чтобы разрешить воспроизведение музыки');
+            });
         }
-        isPlaying = !isPlaying;
     }
 
     function toggleMute() {
@@ -96,25 +100,29 @@ document.addEventListener('DOMContentLoaded', function() {
         isMuted = !isMuted;
     }
 
-    progressBar.addEventListener('input', function() {
-        const duration = audio.duration || trackDuration;
-        audio.currentTime = (this.value / 100) * duration;
-    });
+    if (progressBar) {
+        progressBar.addEventListener('input', function() {
+            const duration = audio.duration || trackDuration;
+            audio.currentTime = (this.value / 100) * duration;
+        });
+    }
 
-    volumeBar.addEventListener('input', function() {
-        audio.volume = this.value / 100;
-        if (this.value > 0 && isMuted) {
-            isMuted = false;
-            muteIcon.className = 'fas fa-volume-up';
-        }
-    });
+    if (volumeBar) {
+        volumeBar.addEventListener('input', function() {
+            audio.volume = this.value / 100;
+            if (this.value > 0 && isMuted) {
+                isMuted = false;
+                muteIcon.className = 'fas fa-volume-up';
+            }
+        });
+    }
 
     audio.addEventListener('timeupdate', updateProgress);
     audio.addEventListener('loadedmetadata', function() {
         if (audio.duration) {
             durationEl.textContent = formatTime(audio.duration);
         } else {
-            durationEl.textContent = '3:24';
+            durationEl.textContent = formatTime(trackDuration);
         }
     });
     
@@ -125,50 +133,72 @@ document.addEventListener('DOMContentLoaded', function() {
         updateProgress();
     });
 
-    playBtn.addEventListener('click', togglePlay);
-    muteBtn.addEventListener('click', toggleMute);
-
-    document.getElementById('prevBtn').addEventListener('click', function() {
-        audio.currentTime = 0;
-        updateProgress();
+    audio.addEventListener('play', function() {
+        isPlaying = true;
+        playIcon.className = 'fas fa-pause';
     });
 
-    document.getElementById('nextBtn').addEventListener('click', function() {
-        audio.currentTime = audio.duration || trackDuration;
-        updateProgress();
+    audio.addEventListener('pause', function() {
+        isPlaying = false;
+        playIcon.className = 'fas fa-play';
     });
 
-    avatar.addEventListener('error', function() {
-        this.src = 'data:image/svg+xml;base64,' + btoa(`
-            <svg xmlns="http://www.w3.org/2000/svg" width="150" height="150" viewBox="0 0 150 150">
-                <rect width="150" height="150" fill="#00ff00" opacity="0.1"/>
-                <circle cx="75" cy="60" r="30" fill="#00ff00" opacity="0.3"/>
-                <path d="M40 110 Q75 140 110 110" stroke="#00ff00" stroke-width="4" fill="none"/>
-            </svg>
-        `);
-    });
+    if (playBtn) {
+        playBtn.addEventListener('click', togglePlay);
+    }
 
+    if (muteBtn) {
+        muteBtn.addEventListener('click', toggleMute);
+    }
+
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+
+    if (prevBtn) {
+        prevBtn.addEventListener('click', function() {
+            audio.currentTime = 0;
+            updateProgress();
+        });
+    }
+
+    if (nextBtn) {
+        nextBtn.addEventListener('click', function() {
+            audio.currentTime = audio.duration || trackDuration;
+            updateProgress();
+        });
+    }
+
+    if (avatar) {
+        avatar.addEventListener('error', function() {
+            this.src = 'data:image/svg+xml;base64,' + btoa(`
+                <svg xmlns="http://www.w3.org/2000/svg" width="150" height="150" viewBox="0 0 150 150">
+                    <rect width="150" height="150" fill="#00ff00" opacity="0.1"/>
+                    <circle cx="75" cy="60" r="30" fill="#00ff00" opacity="0.3"/>
+                    <path d="M40 110 Q75 140 110 110" stroke="#00ff00" stroke-width="4" fill="none"/>
+                </svg>
+            `);
+        });
+    }
+
+    // Запускаем всё
     initTheme();
     setTrackInfo();
-    audio.volume = volumeBar.value / 100;
+    audio.volume = volumeBar ? volumeBar.value / 100 : 0.7;
     updateProgress();
     
-    audio.addEventListener('canplay', function() {
-        durationEl.textContent = formatTime(audio.duration);
-    });
-    
-    audio.addEventListener('error', function() {
-        durationEl.textContent = '3:24';
-    });
-    
-    // Добавляем защиту для audio элемента
-    const originalPlay = audio.play;
-    audio.play = function() {
-        try {
-            return originalPlay.call(this);
-        } catch(e) {
-            // Игнорируем ошибки воспроизведения
-            return Promise.resolve();
+    // Обработка клика по странице для автовоспроизведения
+    document.addEventListener('click', function initAudio() {
+        if (audio.paused) {
+            audio.play().catch(e => console.log('Автовоспроизведение заблокировано'));
         }
-    };
+        document.removeEventListener('click', initAudio);
+    });
+
+    // Для мобильных устройств
+    document.addEventListener('touchstart', function initAudioTouch() {
+        if (audio.paused) {
+            audio.play().catch(e => console.log('Автовоспроизведение заблокировано'));
+        }
+        document.removeEventListener('touchstart', initAudioTouch);
+    });
 });
