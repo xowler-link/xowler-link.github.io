@@ -206,90 +206,11 @@
             gap: 10px;
         }
 
-        .skills-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
-            margin-bottom: 20px;
-        }
-
-        .skill-category {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 10px;
-            padding: 12px;
-            border: 1px solid var(--border-color);
-            transition: all 0.3s;
-        }
-
-        .skill-category:hover {
-            transform: translateY(-3px);
-            border-color: var(--primary-color);
-            box-shadow: 0 5px 15px var(--shadow-color);
-        }
-
-        .category-title {
-            font-size: 0.9rem;
-            font-weight: 600;
-            color: var(--primary-color);
-            margin-bottom: 8px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .category-title i {
-            font-size: 0.9rem;
-        }
-
-        .skill-list {
-            list-style: none;
-        }
-
-        .skill-item {
-            font-size: 0.8rem;
+        .about-text {
+            font-size: 1rem;
+            line-height: 1.6;
             color: var(--text-secondary);
-            margin-bottom: 4px;
-            padding-left: 5px;
-            position: relative;
-        }
-
-        .skill-item:before {
-            content: '•';
-            color: var(--primary-color);
-            position: absolute;
-            left: 0;
-        }
-
-        .experience {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 10px;
-            padding: 15px;
-            border: 1px solid var(--border-color);
-        }
-
-        .experience-title {
-            font-size: 0.9rem;
-            font-weight: 600;
-            color: var(--primary-color);
-            margin-bottom: 10px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .experience-item {
-            font-size: 0.8rem;
-            color: var(--text-secondary);
-            margin-bottom: 6px;
-            padding-left: 5px;
-            position: relative;
-        }
-
-        .experience-item:before {
-            content: '▸';
-            color: var(--primary-color);
-            position: absolute;
-            left: 0;
+            text-align: center;
         }
 
         .links {
@@ -398,11 +319,6 @@
             .link-btn {
                 padding: 16px;
             }
-            
-            .skills-grid {
-                grid-template-columns: 1fr;
-                gap: 10px;
-            }
         }
 
         @media (max-width: 480px) {
@@ -431,8 +347,8 @@
                 font-size: 1.2rem;
             }
             
-            .skill-category {
-                padding: 10px;
+            .about-text {
+                font-size: 0.95rem;
             }
         }
     </style>
@@ -465,88 +381,11 @@
                         Обо мне
                     </h2>
                     
-                    <div class="skills-grid">
-                        <div class="skill-category">
-                            <h3 class="category-title">
-                                <i class="fas fa-code"></i>
-                                Языки
-                            </h3>
-                            <ul class="skill-list">
-                                <li class="skill-item">Python</li>
-                                <li class="skill-item">JavaScript</li>
-                                <li class="skill-item">TypeScript</li>
-                                <li class="skill-item">HTML/CSS</li>
-                            </ul>
-                        </div>
-                        
-                        <div class="skill-category">
-                            <h3 class="category-title">
-                                <i class="fas fa-desktop"></i>
-                                Фронтенд
-                            </h3>
-                            <ul class="skill-list">
-                                <li class="skill-item">React</li>
-                                <li class="skill-item">Vue.js</li>
-                                <li class="skill-item">Next.js</li>
-                            </ul>
-                        </div>
-                        
-                        <div class="skill-category">
-                            <h3 class="category-title">
-                                <i class="fas fa-server"></i>
-                                Бэкенд
-                            </h3>
-                            <ul class="skill-list">
-                                <li class="skill-item">Django</li>
-                                <li class="skill-item">FastAPI</li>
-                                <li class="skill-item">Node.js</li>
-                            </ul>
-                        </div>
-                        
-                        <div class="skill-category">
-                            <h3 class="category-title">
-                                <i class="fas fa-database"></i>
-                                Базы данных
-                            </h3>
-                            <ul class="skill-list">
-                                <li class="skill-item">PostgreSQL</li>
-                                <li class="skill-item">MongoDB</li>
-                            </ul>
-                        </div>
-                    </div>
-                    
-                    <div class="experience">
-                        <h3 class="experience-title">
-                            <i class="fas fa-tools"></i>
-                            Инфраструктура
-                        </h3>
-                        <div class="skill-list">
-                            <div class="skill-item">Docker</div>
-                            <div class="skill-item">Git</div>
-                            <div class="skill-item">GitHub Actions</div>
-                        </div>
-                    </div>
-                    
-                    <div class="experience">
-                        <h3 class="experience-title">
-                            <i class="fas fa-cogs"></i>
-                            Навыки
-                        </h3>
-                        <div class="skill-list">
-                            <div class="skill-item">REST APIs</div>
-                            <div class="skill-item">GraphQL</div>
-                            <div class="skill-item">WebSockets</div>
-                        </div>
-                    </div>
-                    
-                    <div class="experience">
-                        <h3 class="experience-title">
-                            <i class="fas fa-briefcase"></i>
-                            Опыт
-                        </h3>
-                        <div class="experience-item">Разработка scalable backend систем</div>
-                        <div class="experience-item">Создание веб-приложений</div>
-                    </div>
+                    <p class="about-text">
+                        Fullstack разработчик. 
+                        Работаю с Python, JavaScript, TypeScript, React, FastAPI, 
+                        Node.js, PostgreSQL, MongoDB, Docker.
+                    </p>
                 </div>
 
                 <div class="links">
@@ -556,157 +395,6 @@
                     </a>
                     
                     <a href="https://t.me/xowler_1" class="link-btn telegram-channel">
-                        <i class="fab fa-telegram-plane"></i>
-                        <span>Лайф-канал</span>
-                    </a>
-                </div>
-            </div>
-        </main>
-    </div>
-
-    <script>
-        function createSnowflake() {
-            const snowflake = document.createElement('div');
-            snowflake.className = 'snowflake';
-            snowflake.innerHTML = '❄';
-            snowflake.style.left = Math.random() * 100 + 'vw';
-            snowflake.style.animationDuration = (Math.random() * 5 + 5) + 's';
-            snowflake.style.animationDelay = Math.random() * 5 + 's';
-            snowflake.style.fontSize = (Math.random() * 10 + 10) + 'px';
-            
-            const currentTheme = document.documentElement.getAttribute('data-theme');
-            snowflake.style.opacity = currentTheme === 'light' ? '0.3' : '0.6';
-            
-            document.body.appendChild(snowflake);
-            
-            setTimeout(() => {
-                snowflake.remove();
-            }, 15000);
-        }
-
-        function startSnowfall() {
-            for(let i = 0; i < 15; i++) {
-                setTimeout(() => createSnowflake(), i * 300);
-            }
-            setInterval(createSnowflake, 500);
-        }
-
-        function initTheme() {
-            const savedTheme = localStorage.getItem('theme') || 'dark';
-            document.documentElement.setAttribute('data-theme', savedTheme);
-            
-            const themeIcon = document.querySelector('#themeToggle i');
-            if (themeIcon) {
-                themeIcon.className = savedTheme === 'dark' ? 'fas fa-moon' : 'fas fa-sun';
-            }
-        }
-        
-        document.getElementById('themeToggle').addEventListener('click', function() {
-            const currentTheme = document.documentElement.getAttribute('data-theme');
-            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-            
-            document.documentElement.setAttribute('data-theme', newTheme);
-            localStorage.setItem('theme', newTheme);
-            
-            const themeIcon = this.querySelector('i');
-            if (themeIcon) {
-                themeIcon.className = newTheme === 'dark' ? 'fas fa-moon' : 'fas fa-sun';
-            }
-            
-            document.querySelectorAll('.snowflake').forEach(snowflake => {
-                snowflake.style.color = newTheme === 'dark' ? '#ffffff' : '#000000';
-                snowflake.style.opacity = newTheme === 'dark' ? '0.6' : '0.3';
-            });
-        });
-
-        document.addEventListener('DOMContentLoaded', function() {
-            initTheme();
-            startSnowfall();
-            
-            const avatar = document.getElementById('avatar');
-            avatar.addEventListener('mouseenter', function() {
-                this.style.transform = 'scale(1.05)';
-            });
-            
-            avatar.addEventListener('mouseleave', function() {
-                this.style.transform = 'scale(1)';
-            });
-            
-            const blockedKeys = [
-                'F12',
-                'F8',
-                'F5',
-                'Ctrl+Shift+I',
-                'Ctrl+Shift+J',
-                'Ctrl+Shift+C',
-                'Ctrl+U',
-                'Ctrl+S',
-                'Ctrl+P'
-            ];
-            
-            const devToolsKeys = {
-                'F12': true,
-                'F8': true,
-                'F5': true
-            };
-            
-            document.addEventListener('keydown', function(e) {
-                const keyCombination = [];
-                if (e.ctrlKey) keyCombination.push('Ctrl');
-                if (e.shiftKey) keyCombination.push('Shift');
-                if (e.altKey) keyCombination.push('Alt');
-                keyCombination.push(e.key);
-                
-                const keyString = keyCombination.join('+');
-                
-                if (blockedKeys.includes(keyString) || blockedKeys.includes(e.key) || devToolsKeys[e.key]) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    return false;
-                }
-                
-                if ((e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C')) ||
-                    (e.ctrlKey && (e.key === 'U' || e.key === 'S' || e.key === 'P')) ||
-                    (e.key === 'F12' || e.key === 'F8' || e.key === 'F5')) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    return false;
-                }
-                
-                if (e.key === 'F12') {
-                    e.preventDefault();
-                    return false;
-                }
-            });
-            
-            document.addEventListener('contextmenu', function(e) {
-                e.preventDefault();
-                return false;
-            });
-            
-            document.addEventListener('keyup', function(e) {
-                if (e.key === 'F12') {
-                    e.preventDefault();
-                    return false;
-                }
-            });
-            
-            let devToolsOpen = false;
-            const threshold = 160;
-            
-            setInterval(function() {
-                const widthThreshold = window.outerWidth - window.innerWidth > threshold;
-                const heightThreshold = window.outerHeight - window.innerHeight > threshold;
-                
-                if ((widthThreshold || heightThreshold) && !devToolsOpen) {
-                    devToolsOpen = true;
-                    window.location.reload();
-                }
-            }, 1000);
-        });
-    </script>
-</body>
-    </html>ass="link-btn telegram-channel">
                         <i class="fab fa-telegram-plane"></i>
                         <span>Лайф-канал</span>
                     </a>
