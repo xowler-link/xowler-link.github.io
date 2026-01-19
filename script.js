@@ -1,55 +1,223 @@
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('Сайт Ховлера загружается...');
+    let snowActive = localStorage.getItem('snow') === 'true';
+    let snowAnimation = null;
+    let snowflakes = [];
     
-    // === ПЕРЕМЕННЫЕ ===
-    const audio = new Audio('assets/music.mp3');
+    function initSnow() {
+        const canvas = document.getElementById('snowCanvas');
+        if (!canvas) return;
+        
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        
+        const ctx = canvas.getContext('2d');
+        
+        for (let i = 0; i < 100; i++) {
+            snowflakes.push({
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height,
+                radius: Math.random() * 3 + 1,
+                speed: Math.random() * 1 + 0.5,
+                opacity: Math.random() * 0.5 + 0.3,
+                wind: Math.random() * 0.3 - 0.15
+            });
+        }
+        
+        function drawSnowflakes() {
+            if (!snowActive) return;
+            
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            snowflakes.forEach(flake => {
+                ctx.beginPath();
+                ctx.arc(flake.x, flake.y, flake.radius, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(255, 255, 255, ${flake.opacity})`;
+                ctx.fill();
+                
+                flake.y += flake.speed;
+                flake.x += flake.wind;
+                
+                if (flake.y > canvas.height) {
+                    flake.y = -10;
+                    flake.x = Math.random() * canvas.width;
+                }
+                
+                if (flake.x > canvas.width) {
+                    flake.x = 0;
+                } else if (flake.x < 0) {
+                    flake.x = canvas.width;
+                }
+            });
+        }
+        
+        function animateSnow() {
+            drawSnowflakes();
+            snowAnimation = requestAnimationFrame(animateSnow);
+        }
+        
+        if (snowActive) {
+            animateSnow();
+        }
+        
+        window.addEventListener('resize', function() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+        
+        updateSnowIcon();
+    }
+    
+    function toggleSnow() {
+        snowActive = !snowActive;
+        localStorage.setItem('snow', snowActive);
+        
+        const snowIcon = document.querySelector('#snowToggle i');
+        if (snowIcon) {
+            if (snowActive) {
+                snowIcon.style.color = '#00ff00';
+                snowIcon.style.transform = 'rotate(360deg)';
+            } else {
+                snowIcon.style.color = '';
+                snowIcon.style.transform = 'rotate(0deg)';
+            }
+        }
+        
+        if (snowActive) {
+            if (!snowAnimation) {
+                initSnow();
+            }
+        } else {
+            if (snowAnimation) {
+                cancelAnimationFrame(snowAnimation);
+                snowAnimation = null;
+            }
+            const canvas = document.getElementById('snowCanvas');
+            if (canvas) {
+                const ctx = canvas.getContext('2d');
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+            }
+        }
+    }
+    
+    function updateSnowIcon() {
+        const snowIcon = document.querySelector('#snowToggle i');
+        if (snowIcon) {
+            if (snowActive) {
+                snowIcon.style.color = '#00ff00';
+            } else {
+                snowIcon.style.color = '';
+            }
+        }
+    }
+    
+    function initTheme() {
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+        
+        const themeIcon = document.querySelector('#themeToggle i');
+        if (themeIcon) {
+            themeIcon.className = savedTheme === 'dark' ? 'fas fa-moon' : 'fas fa-sun';
+        }
+    }
+    
+    document.getElementById('themeToggle').addEventListener('click', function() {
+        const currentTheme = document.documentElement.getAttribute('data-theme');
+        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+        
+        document.documentElement.setAttribute('data-theme', newTheme);
+        localStorage.setItem('theme', newTheme);
+        
+        const themeIcon = this.querySelector('i');
+        if (themeIcon) {
+            themeIcon.className = newTheme === 'dark' ? 'fas fa-moon' : 'fas fa-sun';
+        }
+    });
+    
+    const tracks = [
+        {
+            file: 'assets/music.mp3',
+            title: 'БРАТИКИ САЙФЕР',
+            artist: 'KAMZ0NER, временно в рехабе, 7leaf, golki, мистер деньги, афоня рекордс, ONMYPLAK, mecinat',
+            duration: 100
+        },
+        {
+            file: 'assets/music2.mp3',
+            title: 'большая с:',
+            artist: 'KAMZ0NER, no9hook',
+            duration: 83
+        },
+        {
+            file: 'assets/music3.mp3',
+            title: 'Чипсы',
+            artist: 'Ernest Merkel, LilSemmi, KAMZ0NER, Cumottyyx, geoxantes, dabbackwood',
+            duration: 221
+        }
+    ];
+    
+    let currentTrackIndex = 0;
     let isPlaying = false;
     let isMuted = false;
     let lastVolume = 30;
-    const trackDuration = 100;
     
-    // === ЭЛЕМЕНТЫ ===
-    const elements = {
-        themeToggle: document.getElementById('themeToggle'),
-        playBtn: document.getElementById('playBtn'),
-        progressBar: document.getElementById('progressBar'),
-        currentTimeEl: document.getElementById('currentTime'),
-        durationEl: document.getElementById('duration'),
-        volumeBar: document.getElementById('volumeBar'),
-        muteBtn: document.getElementById('muteBtn'),
-        prevBtn: document.getElementById('prevBtn'),
-        nextBtn: document.getElementById('nextBtn'),
-        primaryColor: document.getElementById('primaryColor'),
-        bgColor: document.getElementById('bgColor'),
-        saveTheme: document.getElementById('saveTheme'),
-        resetTheme: document.getElementById('resetTheme')
-    };
+    const audio = new Audio(tracks[currentTrackIndex].file);
     
-    // === ФУНКЦИИ ===
-    
-    // Форматирование времени
     function formatTime(seconds) {
         const mins = Math.floor(seconds / 60);
         const secs = Math.floor(seconds % 60);
         return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
     }
     
-    // Обновление прогресса
-    function updateProgress() {
-        if (!elements.progressBar || !elements.currentTimeEl || !elements.durationEl) return;
+    function updateTrackInfo() {
+        const track = tracks[currentTrackIndex];
+        document.getElementById('trackTitle').textContent = track.title;
+        document.getElementById('trackArtist').textContent = track.artist;
+        document.getElementById('duration').textContent = formatTime(track.duration);
         
-        const currentTime = audio.currentTime || 0;
-        const duration = audio.duration || trackDuration;
-        
-        const progressPercent = (currentTime / duration) * 100;
-        elements.progressBar.value = progressPercent;
-        elements.currentTimeEl.textContent = formatTime(currentTime);
-        elements.durationEl.textContent = formatTime(duration);
+        document.querySelectorAll('.playlist-track').forEach((trackEl, index) => {
+            if (index === currentTrackIndex) {
+                trackEl.classList.add('active');
+            } else {
+                trackEl.classList.remove('active');
+            }
+        });
     }
     
-    // Воспроизведение/пауза
+    function updateProgress() {
+        const progressBar = document.getElementById('progressBar');
+        const currentTimeEl = document.getElementById('currentTime');
+        const durationEl = document.getElementById('duration');
+        
+        if (!progressBar || !currentTimeEl || !durationEl) return;
+        
+        const currentTime = audio.currentTime || 0;
+        const duration = audio.duration || tracks[currentTrackIndex].duration;
+        
+        const progressPercent = (currentTime / duration) * 100;
+        progressBar.value = progressPercent;
+        currentTimeEl.textContent = formatTime(currentTime);
+        durationEl.textContent = formatTime(duration);
+    }
+    
+    function changeTrack(index) {
+        if (index < 0) index = tracks.length - 1;
+        if (index >= tracks.length) index = 0;
+        
+        const wasPlaying = isPlaying;
+        
+        audio.pause();
+        currentTrackIndex = index;
+        audio.src = tracks[currentTrackIndex].file;
+        
+        updateTrackInfo();
+        updateProgress();
+        
+        if (wasPlaying) {
+            audio.play().catch(e => console.log('Ошибка воспроизведения:', e));
+        }
+    }
+    
     function togglePlay() {
-        const playIcon = elements.playBtn?.querySelector('i');
+        const playIcon = document.querySelector('#playBtn i');
         if (!playIcon) return;
         
         if (isPlaying) {
@@ -68,199 +236,78 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
-    // Громкость
     function toggleMute() {
-        const muteIcon = elements.muteBtn?.querySelector('i');
+        const muteIcon = document.querySelector('#muteBtn i');
+        const volumeBar = document.getElementById('volumeBar');
         if (!muteIcon) return;
         
         if (isMuted) {
             audio.volume = lastVolume / 100;
             muteIcon.className = 'fas fa-volume-up';
-            if (elements.volumeBar) elements.volumeBar.value = lastVolume;
+            if (volumeBar) volumeBar.value = lastVolume;
             isMuted = false;
         } else {
             lastVolume = audio.volume * 100;
             audio.volume = 0;
             muteIcon.className = 'fas fa-volume-mute';
-            if (elements.volumeBar) elements.volumeBar.value = 0;
+            if (volumeBar) volumeBar.value = 0;
             isMuted = true;
         }
     }
     
-    // Инициализация темы
-    function initTheme() {
-        const savedTheme = localStorage.getItem('theme') || 'dark';
-        document.documentElement.setAttribute('data-theme', savedTheme);
-        
-        // Загружаем кастомные цвета если есть
-        const customPrimary = localStorage.getItem('customPrimary');
-        const customBg = localStorage.getItem('customBg');
-        
-        if (customPrimary && customBg) {
-            applyCustomTheme(customPrimary, customBg);
-        }
-        
-        updateThemeIcon(savedTheme);
-    }
+    initTheme();
+    initSnow();
+    audio.volume = 0.3;
+    updateTrackInfo();
     
-    // Обновление иконки темы
-    function updateThemeIcon(theme) {
-        const themeIcon = elements.themeToggle?.querySelector('i');
-        if (themeIcon) {
-            themeIcon.className = theme === 'dark' ? 'fas fa-moon' : 'fas fa-sun';
-        }
-    }
-    
-    // Применение кастомной темы
-    function applyCustomTheme(primary, bg) {
-        const root = document.documentElement;
-        root.style.setProperty('--primary-color', primary);
-        root.style.setProperty('--primary-dark', darkenColor(primary, 20));
-        root.style.setProperty('--bg-color', bg);
-        
-        // Сохраняем цвета
-        if (elements.primaryColor) elements.primaryColor.value = primary;
-        if (elements.bgColor) elements.bgColor.value = bg;
-    }
-    
-    // Затемнение цвета
-    function darkenColor(color, percent) {
-        let r = parseInt(color.slice(1, 3), 16);
-        let g = parseInt(color.slice(3, 5), 16);
-        let b = parseInt(color.slice(5, 7), 16);
-        
-        r = Math.floor(r * (100 - percent) / 100);
-        g = Math.floor(g * (100 - percent) / 100);
-        b = Math.floor(b * (100 - percent) / 100);
-        
-        return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
-    }
-    
-    // === ОБРАБОТЧИКИ СОБЫТИЙ ===
-    
-    // Тема
-    if (elements.themeToggle) {
-        elements.themeToggle.addEventListener('click', function() {
-            const currentTheme = document.documentElement.getAttribute('data-theme');
-            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-            document.documentElement.setAttribute('data-theme', newTheme);
-            localStorage.setItem('theme', newTheme);
-            updateThemeIcon(newTheme);
-        });
-    }
-    
-    // Плеер
-    if (elements.playBtn) {
-        elements.playBtn.addEventListener('click', togglePlay);
-    }
-    
-    if (elements.progressBar) {
-        elements.progressBar.addEventListener('input', function() {
-            const duration = audio.duration || trackDuration;
-            audio.currentTime = (this.value / 100) * duration;
-        });
-    }
-    
-    if (elements.volumeBar) {
-        elements.volumeBar.addEventListener('input', function() {
-            audio.volume = this.value / 100;
-            if (this.value > 0 && isMuted) {
-                isMuted = false;
-                const muteIcon = elements.muteBtn?.querySelector('i');
-                if (muteIcon) muteIcon.className = 'fas fa-volume-up';
-            }
-        });
-    }
-    
-    if (elements.muteBtn) {
-        elements.muteBtn.addEventListener('click', toggleMute);
-    }
-    
-    if (elements.prevBtn) {
-        elements.prevBtn.addEventListener('click', function() {
-            audio.currentTime = 0;
-            updateProgress();
-        });
-    }
-    
-    if (elements.nextBtn) {
-        elements.nextBtn.addEventListener('click', function() {
-            audio.currentTime = audio.duration || trackDuration;
-            updateProgress();
-        });
-    }
-    
-    // Кастомная тема
-    if (elements.saveTheme) {
-        elements.saveTheme.addEventListener('click', function() {
-            const primary = elements.primaryColor?.value || '#00ff00';
-            const bg = elements.bgColor?.value || '#0a0a0a';
-            
-            applyCustomTheme(primary, bg);
-            localStorage.setItem('customPrimary', primary);
-            localStorage.setItem('customBg', bg);
-            
-            alert('Тема сохранена!');
-        });
-    }
-    
-    if (elements.resetTheme) {
-        elements.resetTheme.addEventListener('click', function() {
-            localStorage.removeItem('customPrimary');
-            localStorage.removeItem('customBg');
-            
-            // Возвращаем стандартные цвета
-            const root = document.documentElement;
-            root.style.removeProperty('--primary-color');
-            root.style.removeProperty('--primary-dark');
-            root.style.removeProperty('--bg-color');
-            
-            if (elements.primaryColor) elements.primaryColor.value = '#00ff00';
-            if (elements.bgColor) elements.bgColor.value = '#0a0a0a';
-            
-            alert('Тема сброшена к стандартной');
-        });
-    }
-    
-    // События аудио
     audio.addEventListener('timeupdate', updateProgress);
     audio.addEventListener('loadedmetadata', updateProgress);
     audio.addEventListener('play', function() {
         isPlaying = true;
-        const playIcon = elements.playBtn?.querySelector('i');
+        const playIcon = document.querySelector('#playBtn i');
         if (playIcon) playIcon.className = 'fas fa-pause';
     });
     audio.addEventListener('pause', function() {
         isPlaying = false;
-        const playIcon = elements.playBtn?.querySelector('i');
+        const playIcon = document.querySelector('#playBtn i');
         if (playIcon) playIcon.className = 'fas fa-play';
     });
     audio.addEventListener('ended', function() {
-        isPlaying = false;
-        const playIcon = elements.playBtn?.querySelector('i');
-        if (playIcon) playIcon.className = 'fas fa-play';
-        audio.currentTime = 0;
-        updateProgress();
+        changeTrack(currentTrackIndex + 1);
     });
     
-    // === ИНИЦИАЛИЗАЦИЯ ===
-    initTheme();
-    audio.volume = 0.3;
-    updateProgress();
+    document.getElementById('playBtn').addEventListener('click', togglePlay);
+    document.getElementById('muteBtn').addEventListener('click', toggleMute);
+    document.getElementById('snowToggle').addEventListener('click', toggleSnow);
     
-    // Автовоспроизведение по клику
-    document.addEventListener('click', function initAudio() {
-        if (audio.paused && !isPlaying) {
-            audio.play().catch(e => {
-                console.log('Автовоспроизведение не удалось:', e);
-            });
+    document.getElementById('prevBtn').addEventListener('click', function() {
+        changeTrack(currentTrackIndex - 1);
+    });
+    
+    document.getElementById('nextBtn').addEventListener('click', function() {
+        changeTrack(currentTrackIndex + 1);
+    });
+    
+    document.getElementById('progressBar').addEventListener('input', function() {
+        const duration = audio.duration || tracks[currentTrackIndex].duration;
+        audio.currentTime = (this.value / 100) * duration;
+    });
+    
+    document.getElementById('volumeBar').addEventListener('input', function() {
+        audio.volume = this.value / 100;
+        if (this.value > 0 && isMuted) {
+            isMuted = false;
+            const muteIcon = document.querySelector('#muteBtn i');
+            if (muteIcon) muteIcon.className = 'fas fa-volume-up';
         }
-        document.removeEventListener('click', initAudio);
-    }, { once: true });
+    });
     
-    console.log('Сайт Ховлера готов!');
+    document.querySelectorAll('.playlist-track').forEach((trackEl, index) => {
+        trackEl.addEventListener('click', function() {
+            changeTrack(index);
+        });
+    });
     
-    // === ПРОСТАЯ ЗАЩИТА ОТ F12 ===
     document.addEventListener('keydown', function(e) {
         if (e.key === 'F12') {
             e.preventDefault();
@@ -268,17 +315,11 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
     
-    // Блокировка правой кнопки
     document.addEventListener('contextmenu', function(e) {
         e.preventDefault();
         return false;
     });
-});on() {
-            this.src = 'data:image/svg+xml;base64,' + btoa(`
-                <svg xmlns="http://www.w3.org/2000/svg" width="150" height="150" viewBox="0 0 150 150">
-                    <rect width="150" height="150" fill="#00ff00" opacity="0.1"/>
-                    <circle cx="75" cy="60" r="30" fill="#00ff00" opacity="0.3"/>
-                    <path d="M40 110 Q75 140 110 110" stroke="#00ff00" stroke-width="4" fill="none"/>
+}); 140 110 110" stroke="#00ff00" stroke-width="4" fill="none"/>
                 </svg>
             `);
         });
