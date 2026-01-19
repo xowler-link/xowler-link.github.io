@@ -37,6 +37,16 @@ body {
     overflow-x: hidden;
 }
 
+#snowCanvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1;
+}
+
 .container {
     max-width: 480px;
     margin: 0 auto;
@@ -44,6 +54,8 @@ body {
     min-height: 100vh;
     display: flex;
     flex-direction: column;
+    position: relative;
+    z-index: 2;
 }
 
 .header {
@@ -52,7 +64,13 @@ body {
     padding: 10px 0;
 }
 
-.theme-switch button {
+.header-controls {
+    display: flex;
+    gap: 10px;
+}
+
+.theme-switch button,
+.snow-switch button {
     background: var(--card-bg);
     border: 1px solid var(--border-color);
     color: var(--text-color);
@@ -68,10 +86,20 @@ body {
     outline: none;
 }
 
-.theme-switch button:hover {
+.theme-switch button:hover,
+.snow-switch button:hover {
     background: var(--primary-color);
     color: var(--bg-color);
     transform: rotate(30deg);
+}
+
+.snow-switch button.active {
+    background: var(--primary-color);
+    color: var(--bg-color);
+}
+
+.snow-switch button i {
+    transition: all 0.5s ease;
 }
 
 .main-content {
@@ -120,6 +148,43 @@ body {
     display: block;
 }
 
+.avatar-hat {
+    position: absolute;
+    top: -25px;
+    left: -15px;
+    width: 180px;
+    height: 140px;
+    background: linear-gradient(135deg, #ff0000, #cc0000);
+    clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+    transform: rotate(-15deg);
+    z-index: 1;
+    border-radius: 10px 10px 0 0;
+}
+
+.avatar-hat::before {
+    content: '';
+    position: absolute;
+    bottom: -15px;
+    left: 10px;
+    right: 10px;
+    height: 30px;
+    background: white;
+    border-radius: 15px;
+}
+
+.avatar-hat::after {
+    content: '';
+    position: absolute;
+    top: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 40px;
+    height: 40px;
+    background: white;
+    border-radius: 50%;
+    box-shadow: 0 0 10px rgba(0,0,0,0.3);
+}
+
 .avatar-status {
     position: absolute;
     bottom: 10px;
@@ -130,6 +195,7 @@ body {
     border-radius: 50%;
     border: 3px solid var(--card-bg);
     animation: pulse 2s infinite;
+    z-index: 2;
 }
 
 @keyframes pulse {
@@ -194,15 +260,6 @@ body {
     overflow: hidden;
     flex-shrink: 0;
     position: relative;
-}
-
-.album-art img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    position: absolute;
-    top: 0;
-    left: 0;
 }
 
 .track-info {
@@ -330,11 +387,75 @@ body {
     border: 2px solid var(--card-bg);
 }
 
+.playlist {
+    margin-top: 20px;
+    border-top: 1px solid var(--border-color);
+    padding-top: 15px;
+}
+
+.playlist-track {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 15px;
+    border-radius: 10px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    transition: all 0.3s;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.playlist-track:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateX(5px);
+}
+
+.playlist-track.active {
+    background: var(--primary-color);
+    color: var(--bg-color);
+}
+
+.playlist-track.active .playlist-track-artist {
+    color: rgba(0, 0, 0, 0.8);
+}
+
+.playlist-track-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.playlist-track-title {
+    font-weight: 600;
+    font-size: 0.9rem;
+    margin-bottom: 3px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.playlist-track-artist {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.playlist-track-duration {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    margin-left: 15px;
+    flex-shrink: 0;
+}
+
+.playlist-track.active .playlist-track-duration {
+    color: rgba(0, 0, 0, 0.8);
+}
+
 .links {
     display: flex;
     flex-direction: column;
     gap: 15px;
-    margin-bottom: 20px;
 }
 
 .link-btn {
@@ -351,9 +472,6 @@ body {
     transition: all 0.3s;
     border: 1px solid transparent;
     outline: none;
-    cursor: pointer;
-    border: none;
-    width: 100%;
 }
 
 .link-btn:hover {
@@ -374,43 +492,6 @@ body {
     background: linear-gradient(135deg, #333333, #24292e);
 }
 
-/* Кастомная тема */
-.custom-theme {
-    background: rgba(0, 0, 0, 0.2);
-    border-radius: 15px;
-    padding: 20px;
-    margin-top: 20px;
-    border: 1px solid var(--border-color);
-}
-
-.theme-controls {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-}
-
-.color-picker {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    color: var(--text-color);
-}
-
-.color-picker label {
-    font-size: 0.9rem;
-    color: var(--text-secondary);
-}
-
-.color-picker input[type="color"] {
-    width: 50px;
-    height: 40px;
-    border: 2px solid var(--border-color);
-    border-radius: 8px;
-    cursor: pointer;
-    background: transparent;
-}
-
-/* Адаптивность */
 @media (max-width: 768px) {
     .container {
         padding: 15px;
@@ -423,6 +504,13 @@ body {
     .avatar-container {
         width: 130px;
         height: 130px;
+    }
+    
+    .avatar-hat {
+        width: 160px;
+        height: 120px;
+        top: -20px;
+        left: -12px;
     }
     
     .username {
@@ -448,6 +536,13 @@ body {
         height: 110px;
     }
     
+    .avatar-hat {
+        width: 140px;
+        height: 100px;
+        top: -15px;
+        left: -10px;
+    }
+    
     .username {
         font-size: 1.8rem;
     }
@@ -465,6 +560,18 @@ body {
     }
     
     .track-artist {
+        font-size: 0.75rem;
+    }
+    
+    .playlist-track-title {
+        font-size: 0.85rem;
+    }
+    
+    .playlist-track-artist {
+        font-size: 0.7rem;
+    }
+    
+    .playlist-track-duration {
         font-size: 0.75rem;
     }
     }
