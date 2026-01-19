@@ -25,6 +25,7 @@
             --border-color: #333333;
             --shadow-color: rgba(0, 255, 0, 0.1);
             --gradient: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            --snowflake-color: #ffffff;
         }
 
         [data-theme="light"] {
@@ -36,6 +37,7 @@
             --text-secondary: #666666;
             --border-color: #dddddd;
             --shadow-color: rgba(0, 170, 0, 0.1);
+            --snowflake-color: #000000;
         }
 
         body {
@@ -59,7 +61,7 @@
 
         .header {
             display: flex;
-            justify-content: space-between;
+            justify-content: flex-end;
             padding: 10px 0;
         }
 
@@ -115,8 +117,8 @@
 
         .avatar-container {
             position: relative;
-            width: 180px;
-            height: 180px;
+            width: 150px;
+            height: 150px;
             margin: 0 auto 25px;
         }
 
@@ -133,99 +135,21 @@
             position: relative;
         }
 
-        .hat-container {
-            position: absolute;
-            top: -60px;
-            left: 50%;
-            transform: translateX(-50%) rotate(-5deg);
-            z-index: 3;
-            width: 180px;
-            height: 120px;
-            pointer-events: none;
-            animation: hatWobble 3s ease-in-out infinite;
-        }
-
-        @keyframes hatWobble {
-            0%, 100% { transform: translateX(-50%) rotate(-5deg); }
-            50% { transform: translateX(-50%) rotate(5deg); }
-        }
-
-        .santa-hat {
-            width: 100%;
-            height: 100%;
-            position: relative;
-        }
-
-        .hat-main {
-            position: absolute;
-            top: 0;
-            left: 15%;
-            width: 70%;
-            height: 70px;
-            background: linear-gradient(135deg, #ff0000, #cc0000);
-            border-radius: 50% 50% 0 0;
-            box-shadow: 0 5px 15px rgba(255, 0, 0, 0.3);
-        }
-
-        .hat-tip {
-            position: absolute;
-            top: 60px;
-            left: 75%;
-            width: 25px;
-            height: 25px;
-            background: white;
-            border-radius: 50%;
-            box-shadow: 0 2px 10px rgba(255, 255, 255, 0.5);
-        }
-
-        .hat-tip::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 15px;
-            height: 15px;
-            background: white;
-            border-radius: 50%;
-            filter: blur(3px);
-        }
-
-        .hat-fur {
-            position: absolute;
-            bottom: -15px;
-            left: 10%;
-            width: 80%;
-            height: 30px;
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 5px 15px rgba(255, 255, 255, 0.3);
-        }
-
-        .hat-fur::before {
-            content: '';
-            position: absolute;
-            bottom: -5px;
-            left: 10%;
-            width: 80%;
-            height: 15px;
-            background: white;
-            border-radius: 7.5px;
-            filter: blur(2px);
-            opacity: 0.7;
+        .avatar:hover {
+            transform: scale(1.05);
         }
 
         .avatar-status {
             position: absolute;
-            bottom: 20px;
-            right: 20px;
+            bottom: 10px;
+            right: 10px;
             width: 20px;
             height: 20px;
             background-color: var(--primary-color);
             border-radius: 50%;
             border: 3px solid var(--card-bg);
             animation: pulse 2s infinite;
-            z-index: 4;
+            z-index: 3;
         }
 
         @keyframes pulse {
@@ -260,27 +184,6 @@
             color: var(--primary-color);
             font-weight: 600;
             margin-bottom: 15px;
-        }
-
-        .holiday-message {
-            background: linear-gradient(135deg, rgba(255, 0, 0, 0.1), rgba(255, 255, 0, 0.1));
-            border: 1px solid rgba(255, 0, 0, 0.3);
-            border-radius: 15px;
-            padding: 15px;
-            margin: 20px 0;
-            text-align: center;
-            animation: messageGlow 2s ease-in-out infinite;
-        }
-
-        @keyframes messageGlow {
-            0%, 100% { box-shadow: 0 0 20px rgba(255, 0, 0, 0.1); }
-            50% { box-shadow: 0 0 30px rgba(255, 0, 0, 0.3); }
-        }
-
-        .holiday-message p {
-            font-size: 0.9rem;
-            color: #ffcc00;
-            font-weight: 600;
         }
 
         .links {
@@ -339,12 +242,16 @@
         .snowflake {
             position: absolute;
             top: -20px;
-            color: white;
-            font-size: 0.8rem;
-            opacity: 0.8;
+            color: var(--snowflake-color);
+            opacity: 0.6;
             animation: snowFall 10s linear infinite;
             pointer-events: none;
             z-index: 1;
+            text-shadow: 0 0 5px currentColor;
+        }
+
+        [data-theme="light"] .snowflake {
+            opacity: 0.3;
         }
 
         @keyframes snowFall {
@@ -353,10 +260,10 @@
                 opacity: 0;
             }
             10% {
-                opacity: 1;
+                opacity: 0.6;
             }
             90% {
-                opacity: 1;
+                opacity: 0.6;
             }
             100% {
                 transform: translateY(100vh) rotate(360deg);
@@ -374,22 +281,8 @@
             }
             
             .avatar-container {
-                width: 150px;
-                height: 150px;
-            }
-            
-            .hat-container {
-                width: 150px;
-                height: 100px;
-                top: -50px;
-            }
-            
-            .hat-main {
-                height: 60px;
-            }
-            
-            .hat-tip {
-                top: 50px;
+                width: 130px;
+                height: 130px;
             }
             
             .username {
@@ -407,22 +300,8 @@
             }
             
             .avatar-container {
-                width: 130px;
-                height: 130px;
-            }
-            
-            .hat-container {
-                width: 130px;
-                height: 85px;
-                top: -40px;
-            }
-            
-            .hat-main {
-                height: 50px;
-            }
-            
-            .hat-tip {
-                top: 45px;
+                width: 110px;
+                height: 110px;
             }
             
             .username {
@@ -438,9 +317,6 @@
 <body>
     <div class="container">
         <header class="header">
-            <button id="toggleHat" style="background: var(--card-bg); border: 1px solid var(--border-color); color: var(--text-color); padding: 8px 16px; border-radius: 20px; cursor: pointer; font-size: 0.9rem; transition: all 0.3s;">
-                <i class="fas fa-hat-wizard"></i> Колпак
-            </button>
             <div class="theme-switch">
                 <button id="themeToggle">
                     <i class="fas fa-moon"></i>
@@ -452,25 +328,12 @@
             <div class="profile-card">
                 <div class="avatar-container">
                     <img src="assets/avatar.jpg" alt="Аватар Ховлера" class="avatar" id="avatar" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNTAiIGhlaWdodD0iMTUwIiB2aWV3Qm94PSIwIDAgMTUwIDE1MCI+PHJlY3Qgd2lkdGg9IjE1MCIgaGVpZ2h0PSIxNTAiIGZpbGw9IiMwMGZmMDAiIG9wYWNpdHk9IjAuMSIvPjxjaXJjbGUgY3g9Ijc1IiBjeT0iNjAiIHI9IjMwIiBmaWxsPSIjMDBmZjAwIiBvcGFjaXR5PSIwLjMiLz48cGF0aCBkPSJNNDAgMTEwIFE3NSAxNDAgMTEwIDExMCIgc3Ryb2tlPSIjMDBmZjAwIiBzdHJva2Utd2lkdGg9IjQiIGZpbGw9Im5vbmUiLz48L3N2Zz4='">
-                    
-                    <div class="hat-container" id="hatContainer">
-                        <div class="santa-hat">
-                            <div class="hat-main"></div>
-                            <div class="hat-tip"></div>
-                            <div class="hat-fur"></div>
-                        </div>
-                    </div>
-                    
                     <div class="avatar-status"></div>
                 </div>
                 
                 <div class="profile-info">
                     <h1 class="username">ховлер</h1>
                     <p class="tagline">Python / JavaScript разработчик</p>
-                    
-                    <div class="holiday-message" id="holidayMessage">
-                        <p>🎄 С Новым Годом! 🎅 Пусть 2024 будет полон кода и успехов! 🚀</p>
-                    </div>
                 </div>
 
                 <div class="links">
@@ -489,7 +352,6 @@
     </div>
 
     <script>
-        // === СНЕГОПАД ===
         function createSnowflake() {
             const snowflake = document.createElement('div');
             snowflake.className = 'snowflake';
@@ -498,6 +360,10 @@
             snowflake.style.animationDuration = (Math.random() * 5 + 5) + 's';
             snowflake.style.animationDelay = Math.random() * 5 + 's';
             snowflake.style.fontSize = (Math.random() * 10 + 10) + 'px';
+            
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            snowflake.style.opacity = currentTheme === 'light' ? '0.3' : '0.6';
+            
             document.body.appendChild(snowflake);
             
             setTimeout(() => {
@@ -506,33 +372,12 @@
         }
 
         function startSnowfall() {
-            for(let i = 0; i < 20; i++) {
+            for(let i = 0; i < 15; i++) {
                 setTimeout(() => createSnowflake(), i * 300);
             }
-            setInterval(createSnowflake, 800);
+            setInterval(createSnowflake, 500);
         }
 
-        // === ПЕРЕКЛЮЧАТЕЛЬ КОЛПАКА ===
-        let isHatVisible = true;
-        
-        document.getElementById('toggleHat').addEventListener('click', function() {
-            const hatContainer = document.getElementById('hatContainer');
-            const toggleBtn = document.getElementById('toggleHat');
-            
-            if (isHatVisible) {
-                hatContainer.style.opacity = '0';
-                hatContainer.style.transform = 'translateX(-50%) translateY(-20px)';
-                toggleBtn.innerHTML = '<i class="fas fa-hat-wizard"></i> Включить колпак';
-            } else {
-                hatContainer.style.opacity = '1';
-                hatContainer.style.transform = 'translateX(-50%) rotate(-5deg)';
-                toggleBtn.innerHTML = '<i class="fas fa-hat-wizard"></i> Выключить колпак';
-            }
-            
-            isHatVisible = !isHatVisible;
-        });
-
-        // === ТЕМА ===
         function initTheme() {
             const savedTheme = localStorage.getItem('theme') || 'dark';
             document.documentElement.setAttribute('data-theme', savedTheme);
@@ -554,54 +399,67 @@
             if (themeIcon) {
                 themeIcon.className = newTheme === 'dark' ? 'fas fa-moon' : 'fas fa-sun';
             }
+            
+            document.querySelectorAll('.snowflake').forEach(snowflake => {
+                snowflake.style.color = newTheme === 'dark' ? '#ffffff' : '#000000';
+                snowflake.style.opacity = newTheme === 'dark' ? '0.6' : '0.3';
+            });
         });
 
-        // === ПРАЗДНИЧНОЕ СООБЩЕНИЕ ===
-        const holidayMessages = [
-            "🎄 С Новым Годом! Пусть код компилируется с первого раза! 🚀",
-            "🎅 Всем багов под ёлку и чистых логов в 2024! 💻",
-            "🌟 Пусть GitHub будет зеленым, а деплои — стабильными! ⭐",
-            "🦌 Мечты сбываются, особенно если это Merge Request! 📈"
-        ];
-        
-        function changeHolidayMessage() {
-            const messageElement = document.getElementById('holidayMessage');
-            const randomMessage = holidayMessages[Math.floor(Math.random() * holidayMessages.length)];
-            messageElement.querySelector('p').textContent = randomMessage;
-            
-            // Анимация смены сообщения
-            messageElement.style.animation = 'none';
-            setTimeout(() => {
-                messageElement.style.animation = 'messageGlow 2s ease-in-out infinite';
-            }, 10);
-        }
-
-        // === ИНИЦИАЛИЗАЦИЯ ===
         document.addEventListener('DOMContentLoaded', function() {
             initTheme();
             startSnowfall();
             
-            // Меняем праздничное сообщение каждые 5 секунд
-            setInterval(changeHolidayMessage, 5000);
-            
-            // Добавляем эффект при наведении на аватар
             const avatar = document.getElementById('avatar');
             avatar.addEventListener('mouseenter', function() {
-                this.style.transform = 'scale(1.05) rotate(5deg)';
-                if (isHatVisible) {
-                    document.getElementById('hatContainer').style.animation = 'hatWobble 0.5s ease-in-out infinite';
-                }
+                this.style.transform = 'scale(1.05)';
             });
             
             avatar.addEventListener('mouseleave', function() {
-                this.style.transform = 'scale(1) rotate(0deg)';
-                if (isHatVisible) {
-                    document.getElementById('hatContainer').style.animation = 'hatWobble 3s ease-in-out infinite';
-                }
+                this.style.transform = 'scale(1)';
             });
             
-            // === ЗАЩИТА ===
+            const blockedKeys = [
+                'F12',
+                'F8',
+                'F5',
+                'Ctrl+Shift+I',
+                'Ctrl+Shift+J',
+                'Ctrl+Shift+C',
+                'Ctrl+U',
+                'Ctrl+S',
+                'Ctrl+P'
+            ];
+            
+            const devToolsKeys = {
+                'F12': true,
+                'F8': true,
+                'F5': true
+            };
+            
             document.addEventListener('keydown', function(e) {
+                const keyCombination = [];
+                if (e.ctrlKey) keyCombination.push('Ctrl');
+                if (e.shiftKey) keyCombination.push('Shift');
+                if (e.altKey) keyCombination.push('Alt');
+                keyCombination.push(e.key);
+                
+                const keyString = keyCombination.join('+');
+                
+                if (blockedKeys.includes(keyString) || blockedKeys.includes(e.key) || devToolsKeys[e.key]) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    return false;
+                }
+                
+                if ((e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C')) ||
+                    (e.ctrlKey && (e.key === 'U' || e.key === 'S' || e.key === 'P')) ||
+                    (e.key === 'F12' || e.key === 'F8' || e.key === 'F5')) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    return false;
+                }
+                
                 if (e.key === 'F12') {
                     e.preventDefault();
                     return false;
@@ -612,7 +470,27 @@
                 e.preventDefault();
                 return false;
             });
+            
+            document.addEventListener('keyup', function(e) {
+                if (e.key === 'F12') {
+                    e.preventDefault();
+                    return false;
+                }
+            });
+            
+            let devToolsOpen = false;
+            const threshold = 160;
+            
+            setInterval(function() {
+                const widthThreshold = window.outerWidth - window.innerWidth > threshold;
+                const heightThreshold = window.outerHeight - window.innerHeight > threshold;
+                
+                if ((widthThreshold || heightThreshold) && !devToolsOpen) {
+                    devToolsOpen = true;
+                    window.location.reload();
+                }
+            }, 1000);
         });
     </script>
 </body>
-    </html> 
+</html>
