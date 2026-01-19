@@ -37,16 +37,6 @@ body {
     overflow-x: hidden;
 }
 
-#snowCanvas {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-    z-index: 1;
-}
-
 .container {
     max-width: 480px;
     margin: 0 auto;
@@ -54,8 +44,6 @@ body {
     min-height: 100vh;
     display: flex;
     flex-direction: column;
-    position: relative;
-    z-index: 2;
 }
 
 .header {
@@ -64,13 +52,7 @@ body {
     padding: 10px 0;
 }
 
-.header-controls {
-    display: flex;
-    gap: 10px;
-}
-
-.theme-switch button,
-.snow-switch button {
+.theme-switch button {
     background: var(--card-bg);
     border: 1px solid var(--border-color);
     color: var(--text-color);
@@ -86,20 +68,10 @@ body {
     outline: none;
 }
 
-.theme-switch button:hover,
-.snow-switch button:hover {
+.theme-switch button:hover {
     background: var(--primary-color);
     color: var(--bg-color);
     transform: rotate(30deg);
-}
-
-.snow-switch button.active {
-    background: var(--primary-color);
-    color: var(--bg-color);
-}
-
-.snow-switch button i {
-    transition: all 0.5s ease;
 }
 
 .main-content {
@@ -148,43 +120,6 @@ body {
     display: block;
 }
 
-.avatar-hat {
-    position: absolute;
-    top: -25px;
-    left: -15px;
-    width: 180px;
-    height: 140px;
-    background: linear-gradient(135deg, #ff0000, #cc0000);
-    clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
-    transform: rotate(-15deg);
-    z-index: 1;
-    border-radius: 10px 10px 0 0;
-}
-
-.avatar-hat::before {
-    content: '';
-    position: absolute;
-    bottom: -15px;
-    left: 10px;
-    right: 10px;
-    height: 30px;
-    background: white;
-    border-radius: 15px;
-}
-
-.avatar-hat::after {
-    content: '';
-    position: absolute;
-    top: -20px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 40px;
-    height: 40px;
-    background: white;
-    border-radius: 50%;
-    box-shadow: 0 0 10px rgba(0,0,0,0.3);
-}
-
 .avatar-status {
     position: absolute;
     bottom: 10px;
@@ -195,7 +130,6 @@ body {
     border-radius: 50%;
     border: 3px solid var(--card-bg);
     animation: pulse 2s infinite;
-    z-index: 2;
 }
 
 @keyframes pulse {
@@ -260,6 +194,15 @@ body {
     overflow: hidden;
     flex-shrink: 0;
     position: relative;
+}
+
+.album-art img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    position: absolute;
+    top: 0;
+    left: 0;
 }
 
 .track-info {
@@ -488,10 +431,6 @@ body {
     background: linear-gradient(135deg, #ff6b6b, #ee5a52);
 }
 
-.github {
-    background: linear-gradient(135deg, #333333, #24292e);
-}
-
 @media (max-width: 768px) {
     .container {
         padding: 15px;
@@ -504,13 +443,6 @@ body {
     .avatar-container {
         width: 130px;
         height: 130px;
-    }
-    
-    .avatar-hat {
-        width: 160px;
-        height: 120px;
-        top: -20px;
-        left: -12px;
     }
     
     .username {
@@ -529,6 +461,45 @@ body {
 @media (max-width: 480px) {
     .profile-card {
         padding: 20px;
+    }
+    
+    .avatar-container {
+        width: 110px;
+        height: 110px;
+    }
+    
+    .username {
+        font-size: 1.8rem;
+    }
+    
+    .tagline {
+        font-size: 1.1rem;
+    }
+    
+    .music-player {
+        padding: 15px;
+    }
+    
+    .control-buttons {
+        gap: 15px;
+    }
+    
+    .track-artist {
+        font-size: 0.75rem;
+    }
+    
+    .playlist-track-title {
+        font-size: 0.85rem;
+    }
+    
+    .playlist-track-artist {
+        font-size: 0.7rem;
+    }
+    
+    .playlist-track-duration {
+        font-size: 0.75rem;
+    }
+}       padding: 20px;
     }
     
     .avatar-container {
