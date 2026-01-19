@@ -82,7 +82,7 @@
                         </div>
                         <div class="playlist-track" data-track="1">
                             <div class="playlist-track-info">
-                                <div class="playlist-track-title">у тебя большая с:</div>
+                                <div class="playlist-track-title">большая с:</div>
                                 <div class="playlist-track-artist">KAMZ0NER, no9hook</div>
                             </div>
                             <div class="playlist-track-duration">1:23</div>
@@ -114,107 +114,7 @@
 
     <script src="script.js"></script>
 </body>
-        </html>>= tracks.length) index = 0;
-            
-            const wasPlaying = isPlaying;
-            
-            audio.pause();
-            currentTrackIndex = index;
-            audio.src = tracks[currentTrackIndex].file;
-            
-            updateTrackInfo();
-            updateProgress();
-            
-            if (wasPlaying) {
-                audio.play().catch(e => console.log('Ошибка воспроизведения:', e));
-            }
-        }
-        
-        function togglePlay() {
-            const playIcon = document.querySelector('#playBtn i');
-            if (!playIcon) return;
-            
-            if (isPlaying) {
-                audio.pause();
-                playIcon.className = 'fas fa-play';
-                isPlaying = false;
-            } else {
-                audio.play()
-                    .then(() => {
-                        playIcon.className = 'fas fa-pause';
-                        isPlaying = true;
-                    })
-                    .catch(error => {
-                        console.log('Ошибка воспроизведения:', error);
-                    });
-            }
-        }
-        
-        function toggleMute() {
-            const muteIcon = document.querySelector('#muteBtn i');
-            const volumeBar = document.getElementById('volumeBar');
-            if (!muteIcon) return;
-            
-            if (isMuted) {
-                audio.volume = lastVolume / 100;
-                muteIcon.className = 'fas fa-volume-up';
-                if (volumeBar) volumeBar.value = lastVolume;
-                isMuted = false;
-            } else {
-                lastVolume = audio.volume * 100;
-                audio.volume = 0;
-                muteIcon.className = 'fas fa-volume-mute';
-                if (volumeBar) volumeBar.value = 0;
-                isMuted = true;
-            }
-        }
-        
-        // === ИНИЦИАЛИЗАЦИЯ ===
-        initTheme();
-        audio.volume = 0.5;
-        updateTrackInfo();
-        
-        // Обработка ошибки обложки
-        const albumCover = document.getElementById('albumCover');
-        if (albumCover) {
-            albumCover.onerror = function() {
-                this.style.display = 'none';
-                const albumArt = document.getElementById('albumArt');
-                albumArt.innerHTML = '<i class="fas fa-music"></i>';
-            };
-        }
-        
-        // События аудио
-        audio.addEventListener('timeupdate', updateProgress);
-        audio.addEventListener('loadedmetadata', updateProgress);
-        audio.addEventListener('play', function() {
-            isPlaying = true;
-            const playIcon = document.querySelector('#playBtn i');
-            if (playIcon) playIcon.className = 'fas fa-pause';
-        });
-        audio.addEventListener('pause', function() {
-            isPlaying = false;
-            const playIcon = document.querySelector('#playBtn i');
-            if (playIcon) playIcon.className = 'fas fa-play';
-        });
-        audio.addEventListener('ended', function() {
-            changeTrack(currentTrackIndex + 1);
-        });
-        
-        // Обработчики кнопок
-        document.getElementById('playBtn').addEventListener('click', togglePlay);
-        document.getElementById('muteBtn').addEventListener('click', toggleMute);
-        
-        document.getElementById('prevBtn').addEventListener('click', function() {
-            changeTrack(currentTrackIndex - 1);
-        });
-        
-        document.getElementById('nextBtn').addEventListener('click', function() {
-            changeTrack(currentTrackIndex + 1);
-        });
-        
-        document.getElementById('progressBar').addEventListener('input', function() {
-            const duration = audio.duration || tracks[currentTrackIndex].duration;
+</html> || tracks[currentTrackIndex].duration;
             audio.currentTime = (this.value / 100) * duration;
         });
         
