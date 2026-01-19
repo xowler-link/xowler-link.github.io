@@ -4,12 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ховлер</title>
-    <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="icon" type="image/x-icon" href="assets/favicon.ico">
     <style>
         * {
             margin: 0;
@@ -61,7 +59,7 @@
 
         .header {
             display: flex;
-            justify-content: flex-end;
+            justify-content: space-between;
             padding: 10px 0;
         }
 
@@ -117,8 +115,8 @@
 
         .avatar-container {
             position: relative;
-            width: 150px;
-            height: 150px;
+            width: 180px;
+            height: 180px;
             margin: 0 auto 25px;
         }
 
@@ -131,18 +129,103 @@
             box-shadow: 0 0 30px var(--shadow-color);
             transition: transform 0.3s;
             display: block;
+            z-index: 2;
+            position: relative;
+        }
+
+        .hat-container {
+            position: absolute;
+            top: -60px;
+            left: 50%;
+            transform: translateX(-50%) rotate(-5deg);
+            z-index: 3;
+            width: 180px;
+            height: 120px;
+            pointer-events: none;
+            animation: hatWobble 3s ease-in-out infinite;
+        }
+
+        @keyframes hatWobble {
+            0%, 100% { transform: translateX(-50%) rotate(-5deg); }
+            50% { transform: translateX(-50%) rotate(5deg); }
+        }
+
+        .santa-hat {
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+
+        .hat-main {
+            position: absolute;
+            top: 0;
+            left: 15%;
+            width: 70%;
+            height: 70px;
+            background: linear-gradient(135deg, #ff0000, #cc0000);
+            border-radius: 50% 50% 0 0;
+            box-shadow: 0 5px 15px rgba(255, 0, 0, 0.3);
+        }
+
+        .hat-tip {
+            position: absolute;
+            top: 60px;
+            left: 75%;
+            width: 25px;
+            height: 25px;
+            background: white;
+            border-radius: 50%;
+            box-shadow: 0 2px 10px rgba(255, 255, 255, 0.5);
+        }
+
+        .hat-tip::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 15px;
+            height: 15px;
+            background: white;
+            border-radius: 50%;
+            filter: blur(3px);
+        }
+
+        .hat-fur {
+            position: absolute;
+            bottom: -15px;
+            left: 10%;
+            width: 80%;
+            height: 30px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(255, 255, 255, 0.3);
+        }
+
+        .hat-fur::before {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 10%;
+            width: 80%;
+            height: 15px;
+            background: white;
+            border-radius: 7.5px;
+            filter: blur(2px);
+            opacity: 0.7;
         }
 
         .avatar-status {
             position: absolute;
-            bottom: 10px;
-            right: 10px;
+            bottom: 20px;
+            right: 20px;
             width: 20px;
             height: 20px;
             background-color: var(--primary-color);
             border-radius: 50%;
             border: 3px solid var(--card-bg);
             animation: pulse 2s infinite;
+            z-index: 4;
         }
 
         @keyframes pulse {
@@ -179,233 +262,25 @@
             margin-bottom: 15px;
         }
 
-        .music-player {
-            background: rgba(0, 0, 0, 0.3);
+        .holiday-message {
+            background: linear-gradient(135deg, rgba(255, 0, 0, 0.1), rgba(255, 255, 0, 0.1));
+            border: 1px solid rgba(255, 0, 0, 0.3);
             border-radius: 15px;
-            padding: 20px;
-            margin-bottom: 30px;
-            border: 1px solid var(--border-color);
+            padding: 15px;
+            margin: 20px 0;
+            text-align: center;
+            animation: messageGlow 2s ease-in-out infinite;
         }
 
-        .player-header {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            margin-bottom: 20px;
+        @keyframes messageGlow {
+            0%, 100% { box-shadow: 0 0 20px rgba(255, 0, 0, 0.1); }
+            50% { box-shadow: 0 0 30px rgba(255, 0, 0, 0.3); }
         }
 
-        .album-art {
-            width: 60px;
-            height: 60px;
-            background: var(--gradient);
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            color: white;
-            overflow: hidden;
-            flex-shrink: 0;
-            position: relative;
-        }
-
-        .album-art img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            position: absolute;
-            top: 0;
-            left: 0;
-        }
-
-        .track-info {
-            flex: 1;
-            min-width: 0;
-        }
-
-        .track-title {
-            font-size: 1.1rem;
-            font-weight: 600;
-            margin-bottom: 5px;
-            color: var(--text-color);
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .track-artist {
-            font-size: 0.8rem;
-            color: var(--text-secondary);
-            line-height: 1.3;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-        }
-
-        .progress-container {
-            margin-bottom: 15px;
-        }
-
-        .progress-bar {
-            width: 100%;
-            height: 4px;
-            -webkit-appearance: none;
-            appearance: none;
-            background: var(--border-color);
-            border-radius: 2px;
-            margin-bottom: 5px;
-            cursor: pointer;
-            outline: none;
-        }
-
-        .progress-bar::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 15px;
-            height: 15px;
-            border-radius: 50%;
-            background: var(--primary-color);
-            cursor: pointer;
-            border: 2px solid var(--card-bg);
-        }
-
-        .time-display {
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.8rem;
-            color: var(--text-secondary);
-            margin-top: 5px;
-        }
-
-        .control-buttons {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 20px;
-        }
-
-        .control-btn {
-            background: none;
-            border: none;
-            color: var(--text-color);
-            font-size: 1.2rem;
-            cursor: pointer;
-            padding: 10px;
-            border-radius: 50%;
-            transition: all 0.3s;
-            outline: none;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .control-btn:hover {
-            background: var(--primary-color);
-            color: var(--bg-color);
-            transform: scale(1.1);
-        }
-
-        .play-btn {
-            width: 50px;
-            height: 50px;
-            background: var(--gradient);
-            color: white;
-            font-size: 1.5rem;
-        }
-
-        .volume-control {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-left: auto;
-        }
-
-        .volume-bar {
-            width: 80px;
-            height: 4px;
-            -webkit-appearance: none;
-            appearance: none;
-            background: var(--border-color);
-            border-radius: 2px;
-            cursor: pointer;
-            outline: none;
-        }
-
-        .volume-bar::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background: var(--primary-color);
-            cursor: pointer;
-            border: 2px solid var(--card-bg);
-        }
-
-        .playlist {
-            margin-top: 20px;
-            border-top: 1px solid var(--border-color);
-            padding-top: 15px;
-        }
-
-        .playlist-track {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 10px 15px;
-            border-radius: 10px;
-            margin-bottom: 8px;
-            cursor: pointer;
-            transition: all 0.3s;
-            background: rgba(255, 255, 255, 0.05);
-        }
-
-        .playlist-track:hover {
-            background: rgba(255, 255, 255, 0.1);
-            transform: translateX(5px);
-        }
-
-        .playlist-track.active {
-            background: var(--primary-color);
-            color: var(--bg-color);
-        }
-
-        .playlist-track.active .playlist-track-artist {
-            color: rgba(0, 0, 0, 0.8);
-        }
-
-        .playlist-track-info {
-            flex: 1;
-            min-width: 0;
-        }
-
-        .playlist-track-title {
-            font-weight: 600;
+        .holiday-message p {
             font-size: 0.9rem;
-            margin-bottom: 3px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .playlist-track-artist {
-            font-size: 0.75rem;
-            color: var(--text-secondary);
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .playlist-track-duration {
-            font-size: 0.8rem;
-            color: var(--text-secondary);
-            margin-left: 15px;
-            flex-shrink: 0;
-        }
-
-        .playlist-track.active .playlist-track-duration {
-            color: rgba(0, 0, 0, 0.8);
+            color: #ffcc00;
+            font-weight: 600;
         }
 
         .links {
@@ -428,6 +303,23 @@
             transition: all 0.3s;
             border: 1px solid transparent;
             outline: none;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .link-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.7s;
+        }
+
+        .link-btn:hover::before {
+            left: 100%;
         }
 
         .link-btn:hover {
@@ -444,6 +336,34 @@
             background: linear-gradient(135deg, #ff6b6b, #ee5a52);
         }
 
+        .snowflake {
+            position: absolute;
+            top: -20px;
+            color: white;
+            font-size: 0.8rem;
+            opacity: 0.8;
+            animation: snowFall 10s linear infinite;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        @keyframes snowFall {
+            0% {
+                transform: translateY(-20px) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
         @media (max-width: 768px) {
             .container {
                 padding: 15px;
@@ -454,8 +374,22 @@
             }
             
             .avatar-container {
-                width: 130px;
-                height: 130px;
+                width: 150px;
+                height: 150px;
+            }
+            
+            .hat-container {
+                width: 150px;
+                height: 100px;
+                top: -50px;
+            }
+            
+            .hat-main {
+                height: 60px;
+            }
+            
+            .hat-tip {
+                top: 50px;
             }
             
             .username {
@@ -465,10 +399,6 @@
             .link-btn {
                 padding: 16px;
             }
-            
-            .volume-control {
-                display: none;
-            }
         }
 
         @media (max-width: 480px) {
@@ -477,8 +407,22 @@
             }
             
             .avatar-container {
-                width: 110px;
-                height: 110px;
+                width: 130px;
+                height: 130px;
+            }
+            
+            .hat-container {
+                width: 130px;
+                height: 85px;
+                top: -40px;
+            }
+            
+            .hat-main {
+                height: 50px;
+            }
+            
+            .hat-tip {
+                top: 45px;
             }
             
             .username {
@@ -488,36 +432,15 @@
             .tagline {
                 font-size: 1.1rem;
             }
-            
-            .music-player {
-                padding: 15px;
-            }
-            
-            .control-buttons {
-                gap: 15px;
-            }
-            
-            .track-artist {
-                font-size: 0.75rem;
-            }
-            
-            .playlist-track-title {
-                font-size: 0.85rem;
-            }
-            
-            .playlist-track-artist {
-                font-size: 0.7rem;
-            }
-            
-            .playlist-track-duration {
-                font-size: 0.75rem;
-            }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <header class="header">
+            <button id="toggleHat" style="background: var(--card-bg); border: 1px solid var(--border-color); color: var(--text-color); padding: 8px 16px; border-radius: 20px; cursor: pointer; font-size: 0.9rem; transition: all 0.3s;">
+                <i class="fas fa-hat-wizard"></i> Колпак
+            </button>
             <div class="theme-switch">
                 <button id="themeToggle">
                     <i class="fas fa-moon"></i>
@@ -529,75 +452,24 @@
             <div class="profile-card">
                 <div class="avatar-container">
                     <img src="assets/avatar.jpg" alt="Аватар Ховлера" class="avatar" id="avatar" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNTAiIGhlaWdodD0iMTUwIiB2aWV3Qm94PSIwIDAgMTUwIDE1MCI+PHJlY3Qgd2lkdGg9IjE1MCIgaGVpZ2h0PSIxNTAiIGZpbGw9IiMwMGZmMDAiIG9wYWNpdHk9IjAuMSIvPjxjaXJjbGUgY3g9Ijc1IiBjeT0iNjAiIHI9IjMwIiBmaWxsPSIjMDBmZjAwIiBvcGFjaXR5PSIwLjMiLz48cGF0aCBkPSJNNDAgMTEwIFE3NSAxNDAgMTEwIDExMCIgc3Ryb2tlPSIjMDBmZjAwIiBzdHJva2Utd2lkdGg9IjQiIGZpbGw9Im5vbmUiLz48L3N2Zz4='">
+                    
+                    <div class="hat-container" id="hatContainer">
+                        <div class="santa-hat">
+                            <div class="hat-main"></div>
+                            <div class="hat-tip"></div>
+                            <div class="hat-fur"></div>
+                        </div>
+                    </div>
+                    
                     <div class="avatar-status"></div>
                 </div>
                 
                 <div class="profile-info">
                     <h1 class="username">ховлер</h1>
                     <p class="tagline">Python / JavaScript разработчик</p>
-                </div>
-
-                <div class="music-player" id="musicPlayer">
-                    <div class="player-header">
-                        <div class="album-art" id="albumArt">
-                            <img src="assets/j.jpg" alt="Обложка трека" id="albumCover">
-                        </div>
-                        <div class="track-info">
-                            <h3 class="track-title" id="trackTitle">БРАТИКИ САЙФЕР</h3>
-                            <p class="track-artist" id="trackArtist">KAMZ0NER, временно в рехабе, 7leaf, golki, мистер деньги, афоня рекордс, ONMYPLAK, mecinat</p>
-                        </div>
-                    </div>
                     
-                    <div class="player-controls">
-                        <div class="progress-container">
-                            <input type="range" id="progressBar" class="progress-bar" value="0" min="0" max="100">
-                            <div class="time-display">
-                                <span id="currentTime">0:00</span>
-                                <span id="duration">1:40</span>
-                            </div>
-                        </div>
-                        
-                        <div class="control-buttons">
-                            <button id="prevBtn" class="control-btn">
-                                <i class="fas fa-step-backward"></i>
-                            </button>
-                            <button id="playBtn" class="control-btn play-btn">
-                                <i class="fas fa-play"></i>
-                            </button>
-                            <button id="nextBtn" class="control-btn">
-                                <i class="fas fa-step-forward"></i>
-                            </button>
-                            <div class="volume-control">
-                                <button id="muteBtn" class="control-btn">
-                                    <i class="fas fa-volume-up"></i>
-                                </button>
-                                <input type="range" id="volumeBar" class="volume-bar" value="50" min="0" max="100">
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="playlist">
-                        <div class="playlist-track active" data-track="0">
-                            <div class="playlist-track-info">
-                                <div class="playlist-track-title">БРАТИКИ САЙФЕР</div>
-                                <div class="playlist-track-artist">KAMZ0NER, временно в рехабе, 7leaf, golki, мистер деньги, афоня рекордс, ONMYPLAK, mecinat</div>
-                            </div>
-                            <div class="playlist-track-duration">1:40</div>
-                        </div>
-                        <div class="playlist-track" data-track="1">
-                            <div class="playlist-track-info">
-                                <div class="playlist-track-title">у тебя большая с:</div>
-                                <div class="playlist-track-artist">KAMZ0NER, no9hook</div>
-                            </div>
-                            <div class="playlist-track-duration">1:23</div>
-                        </div>
-                        <div class="playlist-track" data-track="2">
-                            <div class="playlist-track-info">
-                                <div class="playlist-track-title">Чипсы</div>
-                                <div class="playlist-track-artist">Ernest Merkel, LilSemmi, KAMZ0NER, Cumottyyx, geoxantes, dabbackwood</div>
-                            </div>
-                            <div class="playlist-track-duration">3:41</div>
-                        </div>
+                    <div class="holiday-message" id="holidayMessage">
+                        <p>🎄 С Новым Годом! 🎅 Пусть 2024 будет полон кода и успехов! 🚀</p>
                     </div>
                 </div>
 
@@ -617,6 +489,49 @@
     </div>
 
     <script>
+        // === СНЕГОПАД ===
+        function createSnowflake() {
+            const snowflake = document.createElement('div');
+            snowflake.className = 'snowflake';
+            snowflake.innerHTML = '❄';
+            snowflake.style.left = Math.random() * 100 + 'vw';
+            snowflake.style.animationDuration = (Math.random() * 5 + 5) + 's';
+            snowflake.style.animationDelay = Math.random() * 5 + 's';
+            snowflake.style.fontSize = (Math.random() * 10 + 10) + 'px';
+            document.body.appendChild(snowflake);
+            
+            setTimeout(() => {
+                snowflake.remove();
+            }, 15000);
+        }
+
+        function startSnowfall() {
+            for(let i = 0; i < 20; i++) {
+                setTimeout(() => createSnowflake(), i * 300);
+            }
+            setInterval(createSnowflake, 800);
+        }
+
+        // === ПЕРЕКЛЮЧАТЕЛЬ КОЛПАКА ===
+        let isHatVisible = true;
+        
+        document.getElementById('toggleHat').addEventListener('click', function() {
+            const hatContainer = document.getElementById('hatContainer');
+            const toggleBtn = document.getElementById('toggleHat');
+            
+            if (isHatVisible) {
+                hatContainer.style.opacity = '0';
+                hatContainer.style.transform = 'translateX(-50%) translateY(-20px)';
+                toggleBtn.innerHTML = '<i class="fas fa-hat-wizard"></i> Включить колпак';
+            } else {
+                hatContainer.style.opacity = '1';
+                hatContainer.style.transform = 'translateX(-50%) rotate(-5deg)';
+                toggleBtn.innerHTML = '<i class="fas fa-hat-wizard"></i> Выключить колпак';
+            }
+            
+            isHatVisible = !isHatVisible;
+        });
+
         // === ТЕМА ===
         function initTheme() {
             const savedTheme = localStorage.getItem('theme') || 'dark';
@@ -640,237 +555,49 @@
                 themeIcon.className = newTheme === 'dark' ? 'fas fa-moon' : 'fas fa-sun';
             }
         });
-        
-        // === ПЛЕЕР ===
-        const tracks = [
-            {
-                file: 'assets/music.mp3',
-                title: 'БРАТИКИ САЙФЕР',
-                artist: 'KAMZ0NER, временно в рехабе, 7leaf, golki, мистер деньги, афоня рекордс, ONMYPLAK, mecinat',
-                duration: 100,
-                cover: 'assets/j.jpg'
-            },
-            {
-                file: 'assets/music2.mp3',
-                title: 'у тебя большая с:',
-                artist: 'KAMZ0NER, no9hook',
-                duration: 83,
-                cover: 'assets/e.jpg'
-            },
-            {
-                file: 'assets/music3.mp3',
-                title: 'Чипсы',
-                artist: 'Ernest Merkel, LilSemmi, KAMZ0NER, Cumottyyx, geoxantes, dabbackwood',
-                duration: 221,
-                cover: 'assets/r.jpg'
-            }
+
+        // === ПРАЗДНИЧНОЕ СООБЩЕНИЕ ===
+        const holidayMessages = [
+            "🎄 С Новым Годом! Пусть код компилируется с первого раза! 🚀",
+            "🎅 Всем багов под ёлку и чистых логов в 2024! 💻",
+            "🌟 Пусть GitHub будет зеленым, а деплои — стабильными! ⭐",
+            "🦌 Мечты сбываются, особенно если это Merge Request! 📈"
         ];
         
-        let currentTrackIndex = 0;
-        let isPlaying = false;
-        let isMuted = false;
-        let lastVolume = 50;
-        
-        const audio = new Audio(tracks[currentTrackIndex].file);
-        
-        function formatTime(seconds) {
-            const mins = Math.floor(seconds / 60);
-            const secs = Math.floor(seconds % 60);
-            return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+        function changeHolidayMessage() {
+            const messageElement = document.getElementById('holidayMessage');
+            const randomMessage = holidayMessages[Math.floor(Math.random() * holidayMessages.length)];
+            messageElement.querySelector('p').textContent = randomMessage;
+            
+            // Анимация смены сообщения
+            messageElement.style.animation = 'none';
+            setTimeout(() => {
+                messageElement.style.animation = 'messageGlow 2s ease-in-out infinite';
+            }, 10);
         }
-        
-        function updateTrackInfo() {
-            const track = tracks[currentTrackIndex];
-            document.getElementById('trackTitle').textContent = track.title;
-            document.getElementById('trackArtist').textContent = track.artist;
-            document.getElementById('duration').textContent = formatTime(track.duration);
-            
-            // Обновление обложки
-            const albumCover = document.getElementById('albumCover');
-            const albumArt = document.getElementById('albumArt');
-            
-            if (track.cover) {
-                albumCover.src = track.cover;
-                albumCover.style.display = 'block';
-                // Если в альбом-арте есть иконка музыки, скрываем ее
-                const musicIcon = albumArt.querySelector('i');
-                if (musicIcon) {
-                    musicIcon.style.display = 'none';
-                }
-            } else {
-                // Если обложки нет, показываем иконку музыки
-                albumCover.style.display = 'none';
-                const musicIcon = albumArt.querySelector('i');
-                if (musicIcon) {
-                    musicIcon.style.display = 'flex';
-                } else {
-                    albumArt.innerHTML = '<i class="fas fa-music"></i>';
-                }
-            }
-            
-            // Обработчик ошибки загрузки обложки
-            albumCover.onerror = function() {
-                this.style.display = 'none';
-                const musicIcon = albumArt.querySelector('i');
-                if (musicIcon) {
-                    musicIcon.style.display = 'flex';
-                } else {
-                    albumArt.innerHTML = '<i class="fas fa-music"></i>';
-                }
-            };
-            
-            // Обновление активного трека в плейлисте
-            document.querySelectorAll('.playlist-track').forEach((trackEl, index) => {
-                if (index === currentTrackIndex) {
-                    trackEl.classList.add('active');
-                } else {
-                    trackEl.classList.remove('active');
-                }
-            });
-        }
-        
-        function changeTrack(index) {
-            if (index < 0) index = tracks.length - 1;
-            if (index >= tracks.length) index = 0;
-            
-            const wasPlaying = isPlaying;
-            
-            audio.pause();
-            currentTrackIndex = index;
-            audio.src = tracks[currentTrackIndex].file;
-            
-            updateTrackInfo();
-            updateProgress();
-            
-            if (wasPlaying) {
-                audio.play().catch(e => console.log('Ошибка воспроизведения:', e));
-            }
-        }
-        
-        function togglePlay() {
-            const playIcon = document.querySelector('#playBtn i');
-            if (!playIcon) return;
-            
-            if (isPlaying) {
-                audio.pause();
-                playIcon.className = 'fas fa-play';
-                isPlaying = false;
-            } else {
-                audio.play()
-                    .then(() => {
-                        playIcon.className = 'fas fa-pause';
-                        isPlaying = true;
-                    })
-                    .catch(error => {
-                        console.log('Ошибка воспроизведения:', error);
-                    });
-            }
-        }
-        
-        function toggleMute() {
-            const muteIcon = document.querySelector('#muteBtn i');
-            const volumeBar = document.getElementById('volumeBar');
-            if (!muteIcon) return;
-            
-            if (isMuted) {
-                audio.volume = lastVolume / 100;
-                muteIcon.className = 'fas fa-volume-up';
-                if (volumeBar) volumeBar.value = lastVolume;
-                isMuted = false;
-            } else {
-                lastVolume = audio.volume * 100;
-                audio.volume = 0;
-                muteIcon.className = 'fas fa-volume-mute';
-                if (volumeBar) volumeBar.value = 0;
-                isMuted = true;
-            }
-        }
-        
-        function updateProgress() {
-            const progressBar = document.getElementById('progressBar');
-            const currentTimeEl = document.getElementById('currentTime');
-            const durationEl = document.getElementById('duration');
-            
-            if (!progressBar || !currentTimeEl || !durationEl) return;
-            
-            const currentTime = audio.currentTime || 0;
-            const duration = audio.duration || tracks[currentTrackIndex].duration;
-            
-            const progressPercent = (currentTime / duration) * 100;
-            progressBar.value = progressPercent;
-            currentTimeEl.textContent = formatTime(currentTime);
-            durationEl.textContent = formatTime(duration);
-        }
-        
+
         // === ИНИЦИАЛИЗАЦИЯ ===
         document.addEventListener('DOMContentLoaded', function() {
             initTheme();
-            audio.volume = 0.5;
-            updateTrackInfo();
+            startSnowfall();
             
-            // Инициализация обработчика ошибок для обложки
-            const albumCover = document.getElementById('albumCover');
-            if (albumCover) {
-                albumCover.onerror = function() {
-                    this.style.display = 'none';
-                    const albumArt = document.getElementById('albumArt');
-                    const musicIcon = albumArt.querySelector('i');
-                    if (musicIcon) {
-                        musicIcon.style.display = 'flex';
-                    } else {
-                        albumArt.innerHTML = '<i class="fas fa-music"></i>';
-                    }
-                };
-            }
+            // Меняем праздничное сообщение каждые 5 секунд
+            setInterval(changeHolidayMessage, 5000);
             
-            // События аудио
-            audio.addEventListener('timeupdate', updateProgress);
-            audio.addEventListener('loadedmetadata', updateProgress);
-            audio.addEventListener('play', function() {
-                isPlaying = true;
-                const playIcon = document.querySelector('#playBtn i');
-                if (playIcon) playIcon.className = 'fas fa-pause';
-            });
-            audio.addEventListener('pause', function() {
-                isPlaying = false;
-                const playIcon = document.querySelector('#playBtn i');
-                if (playIcon) playIcon.className = 'fas fa-play';
-            });
-            audio.addEventListener('ended', function() {
-                changeTrack(currentTrackIndex + 1);
-            });
-            
-            // Обработчики кнопок
-            document.getElementById('playBtn').addEventListener('click', togglePlay);
-            document.getElementById('muteBtn').addEventListener('click', toggleMute);
-            
-            document.getElementById('prevBtn').addEventListener('click', function() {
-                changeTrack(currentTrackIndex - 1);
-            });
-            
-            document.getElementById('nextBtn').addEventListener('click', function() {
-                changeTrack(currentTrackIndex + 1);
-            });
-            
-            document.getElementById('progressBar').addEventListener('input', function() {
-                const duration = audio.duration || tracks[currentTrackIndex].duration;
-                audio.currentTime = (this.value / 100) * duration;
-            });
-            
-            document.getElementById('volumeBar').addEventListener('input', function() {
-                audio.volume = this.value / 100;
-                if (this.value > 0 && isMuted) {
-                    isMuted = false;
-                    const muteIcon = document.querySelector('#muteBtn i');
-                    if (muteIcon) muteIcon.className = 'fas fa-volume-up';
+            // Добавляем эффект при наведении на аватар
+            const avatar = document.getElementById('avatar');
+            avatar.addEventListener('mouseenter', function() {
+                this.style.transform = 'scale(1.05) rotate(5deg)';
+                if (isHatVisible) {
+                    document.getElementById('hatContainer').style.animation = 'hatWobble 0.5s ease-in-out infinite';
                 }
             });
             
-            // Клик по трекам в плейлисте
-            document.querySelectorAll('.playlist-track').forEach((trackEl, index) => {
-                trackEl.addEventListener('click', function() {
-                    changeTrack(index);
-                });
+            avatar.addEventListener('mouseleave', function() {
+                this.style.transform = 'scale(1) rotate(0deg)';
+                if (isHatVisible) {
+                    document.getElementById('hatContainer').style.animation = 'hatWobble 3s ease-in-out infinite';
+                }
             });
             
             // === ЗАЩИТА ===
@@ -888,4 +615,4 @@
         });
     </script>
 </body>
-    </html>
+    </html> 
