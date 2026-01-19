@@ -266,12 +266,13 @@
             background: linear-gradient(135deg, #ff6b6b, #ee5a52);
         }
 
+        /* Исправленное отображение снежинок */
         .snowflake {
-            position: absolute;
+            position: fixed;
             top: -20px;
             color: var(--snowflake-color);
             opacity: 0.6;
-            animation: snowFall 9s linear infinite;
+            animation: snowFall 12s linear forwards;
             pointer-events: none;
             z-index: 1;
             text-shadow: 0 0 5px currentColor;
@@ -372,7 +373,7 @@
                 
                 <div class="profile-info">
                     <h1 class="username">ховлер</h1>
-                    <p class="tagline">Python / JavaScript разработчик</p>
+                    <p class="tagline">Python / Java разработчик</p>
                 </div>
 
                 <div class="about-section">
@@ -382,8 +383,11 @@
                     </h2>
                     
 <p class="about-text">
-    Разработчик на Java и Python. Специализируюсь на создании телеграм ботов и модов/плагинов для майнкрафт.
-    Мне 16 лет, живу в России. Увлекаться программированием я стал еще с конца 2021 года благодаря своим друзьям.
+    Мне 16 лет, родился в России. Разработчик с 2021 года. Создаю телеграм боты и майнкрафт моды/плагины.
+    
+    <br><br><strong>Технологии:</strong> Java, Python, FastAPI, Node.js, PostgreSQL, MongoDB, Git.
+    
+    <br><br><strong>Навыки:</strong> Создание ботов, майнкрафт модинг, деплой.
 </p>
                 </div>
 
@@ -408,25 +412,30 @@
             snowflake.className = 'snowflake';
             snowflake.innerHTML = '❄';
             snowflake.style.left = Math.random() * 100 + 'vw';
-            snowflake.style.animationDuration = (Math.random() * 5 + 5) + 's';
-            snowflake.style.animationDelay = Math.random() * 5 + 's';
-            snowflake.style.fontSize = (Math.random() * 10 + 10) + 'px';
+            snowflake.style.animationDuration = (Math.random() * 5 + 7) + 's'; 
+            snowflake.style.animationDelay = Math.random() * 3 + 's'; 
+            snowflake.style.fontSize = (Math.random() * 8 + 8) + 'px'; 
             
             const currentTheme = document.documentElement.getAttribute('data-theme');
             snowflake.style.opacity = currentTheme === 'light' ? '0.3' : '0.6';
             
             document.body.appendChild(snowflake);
             
+        
             setTimeout(() => {
-                snowflake.remove();
-            }, 15000);
+                if (snowflake.parentNode) {
+                    snowflake.remove();
+                }
+            }, 13000);
         }
 
         function startSnowfall() {
-            for(let i = 0; i < 15; i++) {
-                setTimeout(() => createSnowflake(), i * 300);
+          
+            for(let i = 0; i < 10; i++) {
+                setTimeout(() => createSnowflake(), i * 400);
             }
-            setInterval(createSnowflake, 500);
+           
+            setInterval(createSnowflake, 800);
         }
 
         function initTheme() {
